@@ -9,23 +9,26 @@ from calendar import monthrange # so I don't have to deal with leap years
 random.seed()
 now = datetime.datetime.now()
 random_date = 000000
-may_be_current_date = false
+may_be_current_date = False
 temp = random.randint(7, now.year % 100) #7-17
 if temp == now.year % 100 :
-    may_be_current_date = true
-random_date += temp * 100000
-temp = random.randint()
-if may_be_current_date == true :
+    may_be_current_date = True
+print("year: %d", temp)
+random_date += temp * 10000
+if may_be_current_date == True :
     temp = random.randint(1, now.month)
-    if(temp != now.month)
-        may_be_current_date = false
+    if temp != now.month:
+        may_be_current_date = False
 else:
     temp = random.randint(1, 12)
+    print("month: %d", temp)
 random_date += temp * 100
-if may_be_current_date == true :
+if may_be_current_date == True :
     temp = random.randint(1, now.day)
 else:
-    temp = random.randint(monthrange(now.year, now.month))
+    month_range = monthrange(now.year, now.month)
+    temp = random.randint(month_range[0], month_range[1])
+print("day : %d", temp)
 random_date += temp
 #convert to string
 random_date = str('%06d' % random_date)
