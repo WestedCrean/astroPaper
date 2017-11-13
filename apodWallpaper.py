@@ -45,6 +45,8 @@ def dive_and_get_image():
     html_page = urllib2.urlopen(_random_apod_link())
     soup = BeautifulSoup(html_page)
     for link in soup.findAll('a', attrs={'href': re.compile("\b*?image/")}):
-        print link.get('href')
-        
+        link.get('href')
+        templink = link.get('href')
+    directlink = "https://apod.nasa.gov/apod/" + templink
+    print directlink
 dive_and_get_image()
