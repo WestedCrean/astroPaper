@@ -14,6 +14,10 @@ from calendar import monthrange # so I don't have to deal with leap years
 #timezone difference sux
 #maybe just leave today's apod, there's still plenty of images
 #TODO: check for leap years because sometimes it isn't working
+#TODO: check if it's image or just catch exceptions
+#TODO: clear old wallpapers
+#TODO: do Windows wallpaper
+#TODO: get target os resolution and crop image
 #generate random date
 current_system = platform.system()
 print("Current system: ", current_system)
@@ -45,13 +49,13 @@ def _random_apod_link():
     if may_be_current_date:
         temp = random.randint(1, now.day - 1)
     else:
-        month_range = monthrange(now.year, now.month)
+        month_range = monthrange(2009, now.month) #to be sure
         temp = random.randint(month_range[0], month_range[1])
         #print "day : ", temp
     random_date += temp
     #convert to string
     random_date = str('%06d' % random_date)
-    #print("rolled date: " + random_date)
+    print("Date: " + random_date)
     _apod_url = "https://apod.nasa.gov/apod/ap" + random_date + ".html"
     return _apod_url
 
@@ -89,11 +93,11 @@ def _get_apod():
         print status,
 
     f.close()
-
-_get_apod()
-print("Suck a dick!")
-
-#setting up the wallpaper, depending on a system
+x = 0
+for num in range(1, 100):
+    _get_image_link()
+    x += 1
+print("Suck a dick!") #checking if function did it's job
 
 if current_system == "Windows":
     #windows set up
@@ -105,3 +109,4 @@ if current_system == "Darwin":
     wallpaper_path = str(wallpaper_path) + str(currentRandomWallpaper)
     print "Current random wallpaper abspath : " , wallpaper_path #
     app('Finder').desktop_picture.set(mactypes.File(wallpaper_path))
+#setting up the wallpaper, depending on a system
