@@ -5,6 +5,9 @@ from BeautifulSoup import BeautifulSoup
 import re
 import urllib2
 import struct
+from appscript import app, mactypes
+import subprocess
+import os
 import ctypes
 from calendar import monthrange # so I don't have to deal with leap years
 #what's fucked in this code? Well when does nasa updates its apod page?
@@ -14,7 +17,6 @@ from calendar import monthrange # so I don't have to deal with leap years
 #generate random date
 current_system = platform.system()
 print("Current system: ", current_system)
-
 def _random_apod_link():
     random.seed()
     now = datetime.datetime.now()
@@ -63,8 +65,10 @@ def _get_image_link():
     return directlink
     
 def _get_apod():
+    global currentRandomWallpaper
     url = _get_image_link()
     file_name = url.split('/')[-1]
+    currentRandomWallpaper = file_name
     u = urllib2.urlopen(url)
     f = open(file_name, 'wb')
     meta = u.info()
@@ -96,4 +100,8 @@ if current_system == "Windows":
     printf("Whaddup")
 if current_system == "Darwin":
     #macos set up
-    wallpaper_path = 
+    wallpaper_path = os.path.abspath(__file__)
+    wallpaper_path = re.sub(r'apodWallpaper.py', '', wallpaper_path)
+    wallpaper_path = str(wallpaper_path) + str(currentRandomWallpaper)
+    print "Current random wallpaper abspath : " , wallpaper_path #
+    app('Finder').desktop_picture.set(mactypes.File(wallpaper_path))
