@@ -13,7 +13,7 @@ from calendar import monthrange # so I don't have to deal with leap years
 #what's fucked in this code? Well when does nasa updates its apod page?
 #timezone difference sux
 #maybe just leave today's apod, there's still plenty of images
-#TODO: check for leap years because sometimes it isn't working
+#TODO: leap years?
 #TODO: check if it's image or just catch exceptions
 #TODO: clear old wallpapers
 #TODO: do Windows wallpaper
@@ -93,11 +93,9 @@ def _get_apod():
         print status,
 
     f.close()
-x = 0
-for num in range(1, 100):
-    _get_image_link()
-    x += 1
-print("Suck a dick!") #checking if function did it's job
+
+_get_apod()
+print("Downloaded") #checking if function did it's job
 
 if current_system == "Windows":
     #windows set up
