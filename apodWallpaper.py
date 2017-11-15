@@ -13,11 +13,11 @@ from calendar import monthrange # so I don't have to deal with leap years
 #what's fucked in this code? Well when does nasa updates its apod page?
 #timezone difference sux
 #maybe just leave today's apod, there's still plenty of images
-#TODO: leap years?
 #TODO: check if it's image or just catch exceptions
 #TODO: clear old wallpapers
-#TODO: do Windows wallpaper
-#TODO: get target os resolution and crop image
+#TODO: do Windows and Linux wallpaper
+#TODO: get target os resolution and crop image according to it
+
 #generate random date
 current_system = platform.system()
 print("Current system: ", current_system)
@@ -29,30 +29,31 @@ def _random_apod_link():
     may_be_current_date = False
 
     #rolling year
-    temp = random.randint(7, now.year % 100) #7-17
-    if temp == now.year % 100 :
+    year = random.randint(7, now.year % 100) #7-17
+    if year == now.year % 100 :
         may_be_current_date = True
-    random_date += temp * 10000
-
+    random_date += year * 10000
+    
     #rolling month
     if may_be_current_date:
         #if current year
-        temp = random.randint(1, now.month)
+        month = random.randint(1, now.month)
         #here we get rid of the flag, for sure it's legit
-        if temp != now.month:
+        if month != now.month:
             may_be_current_date = False
     else:
-        temp = random.randint(1, 12)
-    random_date += temp * 100
+        month = random.randint(1, 12)
+    
+    random_date += month * 100
 
     #rolling day
     if may_be_current_date:
-        temp = random.randint(1, now.day - 1)
+        day = random.randint(1, now.day - 1)
     else:
-        month_range = monthrange(2009, now.month) #to be sure
-        temp = random.randint(month_range[0], month_range[1])
+        month_range = monthrange(year, month) #to be sure
+        day = random.randint(month_range[0], month_range[1])
         #print "day : ", temp
-    random_date += temp
+    random_date += day
     #convert to string
     random_date = str('%06d' % random_date)
     print("Date: " + random_date)
@@ -60,12 +61,15 @@ def _random_apod_link():
     return _apod_url
 
 def _get_image_link():
-    html_page = urllib2.urlopen(_random_apod_link())
+    html_page = urllib2.urlopen(_random_apod_link()) #sometime this line throws
+    #urllib2.HTTPError: HTTP Error 404: Not Found
     soup = BeautifulSoup(html_page)
     for link in soup.findAll('a', attrs={'href': re.compile("\b*?image/")}):
         link.get('href')
         templink = link.get('href')
-    directlink = "https://apod.nasa.gov/apod/" + templink
+    directlink = "https://apod.nasa.gov/apod/" + templink #sometimes this line throws 
+    #UnboundLocalError: local variable 'templink' referenced before assignment
+    # THIS IS CAUSED when link is not an image
     return directlink
     
 def _get_apod():
@@ -93,10 +97,10 @@ def _get_apod():
         print status,
 
     f.close()
-
-_get_apod()
+for x in range(1,100):
+    _get_image_link()
 print("Downloaded") #checking if function did it's job
-
+'''
 if current_system == "Windows":
     #windows set up
     printf("Whaddup")
@@ -108,3 +112,4 @@ if current_system == "Darwin":
     print "Current random wallpaper abspath : " , wallpaper_path #
     app('Finder').desktop_picture.set(mactypes.File(wallpaper_path))
 #setting up the wallpaper, depending on a system
+'''
