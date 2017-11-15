@@ -97,10 +97,9 @@ def _get_apod():
         print status,
 
     f.close()
-for x in range(1,100):
-    _get_image_link()
+_get_apod()
 print("Downloaded") #checking if function did it's job
-'''
+
 if current_system == "Windows":
     #windows set up
     printf("Whaddup")
@@ -112,4 +111,3 @@ if current_system == "Darwin":
     print "Current random wallpaper abspath : " , wallpaper_path #
     app('Finder').desktop_picture.set(mactypes.File(wallpaper_path))
 #setting up the wallpaper, depending on a system
-'''
