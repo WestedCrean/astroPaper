@@ -81,7 +81,7 @@ def _get_apod():
     f = open(file_name, 'wb')
     meta = u.info()
     file_size = int(meta.getheaders("Content-Length")[0])
-    print "Downloading: %s Bytes: %s" % (file_name, file_size)
+    print("Downloading: " + str(file_name) + " Bytes: "+ str(file_size))
 
     file_size_dl = 0
     block_sz = 8192
@@ -94,12 +94,13 @@ def _get_apod():
         f.write(buffer)
         status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
         status = status + chr(8)*(len(status)+1)
-        print status,
+        print status, #print(status, end="\r") is python3 version
 
     f.close()
 _get_apod()
 print("Downloaded") #checking if function did it's job
 
+print("Setting up the wallpaper")
 if current_system == "Windows":
     #windows set up
     printf("Whaddup")
@@ -108,6 +109,6 @@ if current_system == "Darwin":
     wallpaper_path = os.path.abspath(__file__)
     wallpaper_path = re.sub(r'apodWallpaper.py', '', wallpaper_path)
     wallpaper_path = str(wallpaper_path) + str(currentRandomWallpaper)
-    print "Current random wallpaper abspath : " , wallpaper_path #
+    print("Current random wallpaper absolute path : " + wallpaper_path)
     app('Finder').desktop_picture.set(mactypes.File(wallpaper_path))
 #setting up the wallpaper, depending on a system
