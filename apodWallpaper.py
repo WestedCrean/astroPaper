@@ -1,19 +1,18 @@
 import datetime
 import random
 import platform
-from BeautifulSoup import BeautifulSoup
+from bs4 import BeautifulSoup
 import re
-import urllib2
+import urllib.request
+import urllib.parse
+import urllib.error
+import commands
 import struct
-from appscript import app, mactypes
 import subprocess
 import os
+import __main__
 import ctypes
-from calendar import monthrange # so I don't have to deal with leap years
-#what's fucked in this code? Well when does nasa updates its apod page?
-#timezone difference sux
-#maybe just leave today's apod, there's still plenty of images
-#TODO: check if it's image or just catch exceptions
+from calendar import monthrange 
 #TODO: clear old wallpapers
 #TODO: do Windows and Linux wallpaper
 #TODO: get target os resolution and crop image according to it
@@ -61,15 +60,25 @@ def _random_apod_link():
     return _apod_url
 
 def _get_image_link():
-    html_page = urllib2.urlopen(_random_apod_link()) #sometime this line throws
+    while True:
+        try:
+            while True:
+                try:
+                    html_page = urllib.request.urlopen(_random_apod_link()) #sometime this line throws
+                    break
+                except urllib.error.HTTPError:
+                    print("Request Failed, trying again with different link")
     #urllib2.HTTPError: HTTP Error 404: Not Found
-    soup = BeautifulSoup(html_page)
-    for link in soup.findAll('a', attrs={'href': re.compile("\b*?image/")}):
-        link.get('href')
-        templink = link.get('href')
-    directlink = "https://apod.nasa.gov/apod/" + templink #sometimes this line throws 
-    #UnboundLocalError: local variable 'templink' referenced before assignment
-    # THIS IS CAUSED when link is not an image
+            soup = BeautifulSoup(html_page, "lxml")
+            for link in soup.findAll('a', attrs={'href': re.compile("\b*?image/")}):
+                link.get('href')
+                templink = link.get('href')
+            directlink = "https://apod.nasa.gov/apod/" + templink #sometimes this line throws 
+            #UnboundLocalError: local variable 'templink' referenced before assignment
+            # THIS IS CAUSED when link is not an image
+            break
+        except UnboundLocalError:
+            print("Link isn't an image, trying again with different one.")
     return directlink
     
 def _get_apod():
@@ -77,38 +86,37 @@ def _get_apod():
     url = _get_image_link()
     file_name = url.split('/')[-1]
     currentRandomWallpaper = file_name
-    u = urllib2.urlopen(url)
+    u = urllib.request.urlopen(url)
     f = open(file_name, 'wb')
     meta = u.info()
-    file_size = int(meta.getheaders("Content-Length")[0])
-    print("Downloading: " + str(file_name) + " Bytes: "+ str(file_size))
-
-    file_size_dl = 0
-    block_sz = 8192
-    while True:
-        buffer = u.read(block_sz)
-        if not buffer:
-            break
-
-        file_size_dl += len(buffer)
-        f.write(buffer)
-        status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
-        status = status + chr(8)*(len(status)+1)
-        print status, #print(status, end="\r") is python3 version
 
     f.close()
+
 _get_apod()
 print("Downloaded") #checking if function did it's job
 
 print("Setting up the wallpaper")
-if current_system == "Windows":
-    #windows set up
-    printf("Whaddup")
-if current_system == "Darwin":
-    #macos set up
-    wallpaper_path = os.path.abspath(__file__)
-    wallpaper_path = re.sub(r'apodWallpaper.py', '', wallpaper_path)
-    wallpaper_path = str(wallpaper_path) + str(currentRandomWallpaper)
-    print("Current random wallpaper absolute path : " + wallpaper_path)
-    app('Finder').desktop_picture.set(mactypes.File(wallpaper_path))
+
+wallpaper_path = os.path.abspath(__file__)
+wallpaper_path = re.sub(r'apodWallpaper.py', '', wallpaper_path)
+wallpaper_path = str(wallpaper_path) + str(currentRandomWallpaper)
+print("Current random wallpaper absolute path : " + wallpaper_path)
+
 #setting up the wallpaper, depending on a system
+if current_system == "Windows":
+     #windows set up
+    print("Whaddup")
+if current_system == "Darwin":
+    try:
+        from appscript import app, mactypes
+    except:
+        print("Appscript not installed.")
+    #macos set up
+    app('Finder').desktop_picture.set(mactypes.File(wallpaper_path))
+ 
+if current_system == "Linux":
+    def set_gnome_wallpaper(file_path):
+        command = "gconftool-2 --set \ /desktop/gnome/background/picture_filename \ --type string '%s'" % file_path
+        status, output = commands.getstatusoutput(command)
+        return status
+    set_gnome_wallpaper(wallpaper_path)
