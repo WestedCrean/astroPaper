@@ -6,10 +6,11 @@ import re
 import urllib.request
 import urllib.parse
 import urllib.error
-import commands
+import lxml
 import struct
 import subprocess
 import os
+import shutil
 import __main__
 import ctypes
 from calendar import monthrange 
@@ -20,6 +21,8 @@ from calendar import monthrange
 #generate random date
 current_system = platform.system()
 print("Current system: ", current_system)
+
+    
 def _random_apod_link():
     random.seed()
     now = datetime.datetime.now()
@@ -69,7 +72,11 @@ def _get_image_link():
                 except urllib.error.HTTPError:
                     print("Request Failed, trying again with different link")
     #urllib2.HTTPError: HTTP Error 404: Not Found
-            soup = BeautifulSoup(html_page, "lxml")
+            try:
+                soup = BeautifulSoup(html_page, "lxml")
+            except:
+                print("lxml not found, using built-in html.parser")
+                soup = BeautifulSoup(html_page, "html.parser")
             for link in soup.findAll('a', attrs={'href': re.compile("\b*?image/")}):
                 link.get('href')
                 templink = link.get('href')
@@ -86,15 +93,31 @@ def _get_apod():
     url = _get_image_link()
     file_name = url.split('/')[-1]
     currentRandomWallpaper = file_name
-    u = urllib.request.urlopen(url)
-    f = open(file_name, 'wb')
-    meta = u.info()
+    print("Downloading ...")
+    while True:
+        try:
+            with urllib.request.urlopen(url) as response, open(file_name, 'wb') as out_file:
+                shutil.copyfileobj(response, out_file)
+            break
+        except urllib.error.HTTPError:
+            print("Request Failed, trying again.")
 
-    f.close()
-
-_get_apod()
+while True:
+    try:
+        _get_apod()
+        break
+    except urllib.request.http.client.BadStatusLine:
+         print("Request Failed, trying again.")
 print("Downloaded") #checking if function did it's job
 
+#-------------
+# here will go openCV code for deciding if image is "pretty" (suitable for a wallpaper)
+#-------------
+
+
+# ------------
+# here will go openCV code for cutting wallpaper
+#-------------
 print("Setting up the wallpaper")
 
 wallpaper_path = os.path.abspath(__file__)
@@ -105,8 +128,13 @@ print("Current random wallpaper absolute path : " + wallpaper_path)
 #setting up the wallpaper, depending on a system
 if current_system == "Windows":
      #windows set up
-    print("Whaddup")
+    print("Windows script")
+    SPI_SETDESKTOPWALLPAPER = 20
+    ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKTOPWALLPAPER, 0, wallpaper_path, 0)
+    print("Desktop background set up")
+    
 if current_system == "Darwin":
+    print("MacOS script")
     try:
         from appscript import app, mactypes
     except:
@@ -115,8 +143,4 @@ if current_system == "Darwin":
     app('Finder').desktop_picture.set(mactypes.File(wallpaper_path))
  
 if current_system == "Linux":
-    def set_gnome_wallpaper(file_path):
-        command = "gconftool-2 --set \ /desktop/gnome/background/picture_filename \ --type string '%s'" % file_path
-        status, output = commands.getstatusoutput(command)
-        return status
-    set_gnome_wallpaper(wallpaper_path)
+    print("Linux script")
