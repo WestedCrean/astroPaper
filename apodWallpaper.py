@@ -6,24 +6,23 @@ import re
 import urllib.request
 import urllib.parse
 import urllib.error
+import lxml
+import struct
 import subprocess
 import os
+import shutil
 import __main__
 import ctypes
 from calendar import monthrange 
 #TODO: clear old wallpapers
 #TODO: do Windows and Linux wallpaper
 #TODO: get target os resolution and crop image according to it
-print("Start in debug mode?")
-print("y/n")
-debugMode = False
-userInput = input()
-if userInput.lower() == "y" :
-    debugMode = True
+
 #generate random date
 current_system = platform.system()
-if debugMode:
-    print("Current system: ", current_system)
+print("Current system: ", current_system)
+
+    
 def _random_apod_link():
     random.seed()
     now = datetime.datetime.now()
@@ -53,15 +52,13 @@ def _random_apod_link():
     if may_be_current_date:
         day = random.randint(1, now.day - 1)
     else:
-
-        month_range = monthrange(year, month)#setting up the wallpaper, depending on a systemr, month) #to be sure
+        month_range = monthrange(year, month) #to be sure
         day = random.randint(month_range[0], month_range[1])
         #print "day : ", temp
     random_date += day
     #convert to string
     random_date = str('%06d' % random_date)
-    if debugMode:
-        print("Date: " + random_date)
+    print("Date: " + random_date)
     _apod_url = "https://apod.nasa.gov/apod/ap" + random_date + ".html"
     return _apod_url
 
@@ -73,10 +70,13 @@ def _get_image_link():
                     html_page = urllib.request.urlopen(_random_apod_link()) #sometime this line throws
                     break
                 except urllib.error.HTTPError:
-                    if debugMode:
-                        print("Request Failed, trying again with different link")
+                    print("Request Failed, trying again with different link")
     #urllib2.HTTPError: HTTP Error 404: Not Found
-            soup = BeautifulSoup(html_page, "lxml")
+            try:
+                soup = BeautifulSoup(html_page, "lxml")
+            except:
+                print("lxml not found, using built-in html.parser")
+                soup = BeautifulSoup(html_page, "html.parser")
             for link in soup.findAll('a', attrs={'href': re.compile("\b*?image/")}):
                 link.get('href')
                 templink = link.get('href')
@@ -85,8 +85,7 @@ def _get_image_link():
             # THIS IS CAUSED when link is not an image
             break
         except UnboundLocalError:
-            if debugMode:
-                print("Link isn't an image, trying again with different one.")
+            print("Link isn't an image, trying again with different one.")
     return directlink
     
 def _get_apod():
@@ -94,33 +93,54 @@ def _get_apod():
     url = _get_image_link()
     file_name = url.split('/')[-1]
     currentRandomWallpaper = file_name
-    u = urllib.request.urlopen(url)
-    f = open(file_name, 'wb')
-    meta = u.info()
+    print("Downloading ...")
+    while True:
+        try:
+            with urllib.request.urlopen(url) as response, open(file_name, 'wb') as out_file:
+                shutil.copyfileobj(response, out_file)
+            break
+        except urllib.error.HTTPError:
+            print("Request Failed, trying again.")
 
-    f.close()
+while True:
+    try:
+        _get_apod()
+        break
+    except urllib.request.http.client.BadStatusLine:
+         print("Request Failed, trying again.")
+print("Downloaded") #checking if function did it's job
 
-_get_apod()
-if debugMode:
-    print("Downloaded") #checking if function did it's job
-    print("Setting up the wallpaper")
+#-------------
+# here will go openCV code for deciding if image is "pretty" (suitable for a wallpaper)
+#-------------
+
+
+# ------------
+# here will go openCV code for cutting wallpaper
+#-------------
+print("Setting up the wallpaper")
 
 wallpaper_path = os.path.abspath(__file__)
 wallpaper_path = re.sub(r'apodWallpaper.py', '', wallpaper_path)
 wallpaper_path = str(wallpaper_path) + str(currentRandomWallpaper)
-if debugMode:
-    print("Current random wallpaper absolute path : " + wallpaper_path)
+print("Current random wallpaper absolute path : " + wallpaper_path)
 
 #setting up the wallpaper, depending on a system
 if current_system == "Windows":
      #windows set up
-    if debugMode:
-        print("Whaddup")
+    print("Windows script")
+    SPI_SETDESKTOPWALLPAPER = 20
+    ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKTOPWALLPAPER, 0, wallpaper_path, 0)
+    print("Desktop background set up")
+    
 if current_system == "Darwin":
+    print("MacOS script")
     try:
         from appscript import app, mactypes
     except:
-        if debugMode:
-            print("Appscript not installed.")
+        print("Appscript not installed.")
     #macos set up
     app('Finder').desktop_picture.set(mactypes.File(wallpaper_path))
+ 
+if current_system == "Linux":
+    print("Linux script")
