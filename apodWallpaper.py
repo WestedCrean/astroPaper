@@ -7,6 +7,7 @@ import urllib.request
 import urllib.parse
 import urllib.error
 import lxml
+import tkinter as tk
 import struct
 import subprocess
 import os
@@ -14,15 +15,22 @@ import shutil
 import __main__
 import ctypes
 from calendar import monthrange 
+
+
+
 #TODO: clear old wallpapers
-#TODO: do Windows and Linux wallpaper
+#TODO: and Linux wallpaper
 #TODO: get target os resolution and crop image according to it
 
 #generate random date
 current_system = platform.system()
 print("Current system: ", current_system)
+root = tk.Tk()
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+print("Current screen's width: " + str(screen_width))
+print("Current screen's height: " + str(screen_height))
 
-    
 def _random_apod_link():
     random.seed()
     now = datetime.datetime.now()
