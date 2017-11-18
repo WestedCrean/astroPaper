@@ -121,8 +121,16 @@ print("Downloaded") #checking if function did it's job
 #-------------
 # here will go openCV code for deciding if image is "pretty" (suitable for a wallpaper)
 #-------------
-
-
+'''
+pseudocode:
+if imageResolution < screen_width*screen_height:
+    download another image
+if there is a lot of text:
+    downlaod another image
+if image_width < screen_width
+    use opencv to flip it sideways, resolution is ok so it's just about it
+now just cut the most interesting spot on the image into screen_height*screen_width resolution and voila
+'''
 # ------------
 # here will go openCV code for cutting wallpaper
 #-------------
