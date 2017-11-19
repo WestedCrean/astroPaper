@@ -18,7 +18,6 @@ from calendar import monthrange
 
 
 
-#TODO: clear old wallpapers WORKING ON IT
 #TODO: set Linux wallpaper, probably only gnome and unity
 #TODO: check if downloaded wallpaper is ok
 
@@ -161,13 +160,15 @@ def wallpaperSetup(current_system):
     if current_system == "Linux":
         print("Linux script")
 
-def clearOldWallpapers(path): #add global wallpaper save folder string
-    for root, dirs, files in os.walk(path):
-        for currentFile in files:
-            print("processing file: " + currentFile)
-            exts = ('.jpg','.png')
-            if any(currentFile.lower().endswith(exts) for ext in exts):
-                os.remove(os.path.join(root,currentFile))
+def getPath():
+    wallpaper_path = os.path.abspath(__file__)
+    wallpaper_path = re.sub(r'apodWallpaper.py', '', wallpaper_path)
+    return wallpaper_path
+
+def clearOldWallpapers(dir): #add global wallpaper save folder string
+    for file in os.listdir(dir):
+        if file.endswith('.jpg'):
+            os.remove(os.path.join(dir, file))
 
 def main():
     while True:
@@ -181,7 +182,7 @@ def main():
     #editWallpaper
     
     wallpaperSetup(current_system)
-    clearOldWallpapers(os.path.abspath(__file__))
+    clearOldWallpapers(getPath())
     #waitForAnotherRound
     pass
 main()
