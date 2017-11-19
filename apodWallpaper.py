@@ -161,7 +161,7 @@ def wallpaperSetup(current_system):
     if current_system == "Linux":
         print("Linux script")
 
-def cleanDirectory(path): #add global wallpaper save folder string
+def clearOldWallpapers(path): #add global wallpaper save folder string
     for root, dirs, files in os.walk(path):
         for currentFile in files:
             print("processing file: " + currentFile)
@@ -181,7 +181,7 @@ def main():
     #editWallpaper
     
     wallpaperSetup(current_system)
-    cleanDirectory(os.path.abspath(__file__))
+    clearOldWallpapers(os.path.abspath(__file__))
     #waitForAnotherRound
     pass
 main()
