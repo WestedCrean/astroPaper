@@ -4,8 +4,8 @@ import platform
 from bs4 import BeautifulSoup
 import re
 import urllib.request
-import urllib.parse
 import urllib.error
+import urllib.parse
 import lxml
 import tkinter as tk
 import struct
@@ -18,9 +18,9 @@ from calendar import monthrange
 
 
 
-#TODO: clear old wallpapers
-#TODO: and Linux wallpaper
-#TODO: get target os resolution and crop image according to it
+#TODO: clear old wallpapers WORKING ON IT
+#TODO: set Linux wallpaper, probably only gnome and unity
+#TODO: check if downloaded wallpaper is ok
 
 #generate random date
 current_system = platform.system()
@@ -31,6 +31,9 @@ screen_height = root.winfo_screenheight()
 print("Current screen's width: " + str(screen_width))
 print("Current screen's height: " + str(screen_height))
 
+#-------------
+# getting image functions
+#-------------
 def _random_apod_link():
     random.seed()
     now = datetime.datetime.now()
@@ -106,17 +109,10 @@ def _get_apod():
         try:
             with urllib.request.urlopen(url) as response, open(file_name, 'wb') as out_file:
                 shutil.copyfileobj(response, out_file)
+                return 
             break
         except urllib.error.HTTPError:
             print("Request Failed, trying again.")
-
-while True:
-    try:
-        _get_apod()
-        break
-    except urllib.request.http.client.BadStatusLine:
-         print("Request Failed, trying again.")
-print("Downloaded") #checking if function did it's job
 
 #-------------
 # here will go openCV code for deciding if image is "pretty" (suitable for a wallpaper)
@@ -134,29 +130,62 @@ now just cut the most interesting spot on the image into screen_height*screen_wi
 # ------------
 # here will go openCV code for cutting wallpaper
 #-------------
-print("Setting up the wallpaper")
 
-wallpaper_path = os.path.abspath(__file__)
-wallpaper_path = re.sub(r'apodWallpaper.py', '', wallpaper_path)
-wallpaper_path = str(wallpaper_path) + str(currentRandomWallpaper)
-print("Current random wallpaper absolute path : " + wallpaper_path)
 
-#setting up the wallpaper, depending on a system
-if current_system == "Windows":
-     #windows set up
-    print("Windows script")
-    SPI_SETDESKTOPWALLPAPER = 20
-    ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKTOPWALLPAPER, 0, wallpaper_path, 0)
-    print("Desktop background set up")
+def wallpaperSetup(current_system):
+
+
+    print("Setting up the wallpaper")
+    wallpaper_path = os.path.abspath(__file__)
+    wallpaper_path = re.sub(r'apodWallpaper.py', '', wallpaper_path)
+    wallpaper_path = str(wallpaper_path) + str(currentRandomWallpaper)
+    print("Current random wallpaper absolute path : " + wallpaper_path)
+
+    #setting up the wallpaper, depending on a system
+    if current_system == "Windows":
+        #windows set up
+        print("Windows script")
+        SPI_SETDESKTOPWALLPAPER = 20
+        ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKTOPWALLPAPER, 0, wallpaper_path, 0)
+        print("Desktop background set up")
+        
+    if current_system == "Darwin":
+        print("MacOS script")
+        try:
+            from appscript import app, mactypes
+        except:
+            print("Appscript not installed.")
+        #macos set up
+        app('Finder').desktop_picture.set(mactypes.File(wallpaper_path))
     
-if current_system == "Darwin":
-    print("MacOS script")
-    try:
-        from appscript import app, mactypes
-    except:
-        print("Appscript not installed.")
-    #macos set up
-    app('Finder').desktop_picture.set(mactypes.File(wallpaper_path))
- 
-if current_system == "Linux":
-    print("Linux script")
+    if current_system == "Linux":
+        print("Linux script")
+
+def cleanDirectory(path): #add global wallpaper save folder string
+    for root, dirs, files in os.walk(path):
+        for currentFile in files:
+            print("processing file: " + currentFile)
+            exts = ('.jpg','.png')
+            if any(currentFile.lower().endswith(exts) for ext in exts):
+                os.remove(os.path.join(root,currentFile))
+
+def main():
+    while True:
+        try:
+            _get_apod()
+            break
+        except urllib.request.http.client.BadStatusLine:
+            print("Request Failed, trying again.")
+    print("Downloaded") #checking if function did it's job
+    #cleanOtherWallpapers
+    #editWallpaper
+    
+    wallpaperSetup(current_system)
+    cleanDirectory(os.path.abspath(__file__))
+    #waitForAnotherRound
+    pass
+main()
+'''
+if __name__ == "__main__":
+    main(sys.argv)
+'''
