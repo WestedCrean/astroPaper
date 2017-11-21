@@ -17,7 +17,7 @@ import ctypes
 from calendar import monthrange 
 
 
-
+#TODO: make clearOldWallpapers() method clear every image except the last one
 #TODO: set Linux wallpaper, probably only gnome and unity
 #TODO: check if downloaded wallpaper is ok
 
@@ -165,10 +165,11 @@ def getPath():
     wallpaper_path = re.sub(r'apodWallpaper.py', '', wallpaper_path)
     return wallpaper_path
 
-def clearOldWallpapers(dir): #add global wallpaper save folder string
+def clearOldWallpapers(dir, lastWallpaperName): #add global wallpaper save folder string
     for file in os.listdir(dir):
-        if file.endswith('.jpg'):
-            os.remove(os.path.join(dir, file))
+        if file != lastWallpaperName:    
+            if file.endswith('.jpg'):
+                os.remove(os.path.join(dir, file))
 
 def main():
     while True:
@@ -182,7 +183,7 @@ def main():
     #editWallpaper
     
     wallpaperSetup(current_system)
-    clearOldWallpapers(getPath())
+    clearOldWallpapers(getPath(), currentRandomWallpaper)
     #waitForAnotherRound
     pass
 main()
