@@ -20,6 +20,7 @@ from calendar import monthrange
 #TODO: make clearOldWallpapers() method clear every image except the last one
 #TODO: set Linux wallpaper, probably only gnome and unity
 #TODO: check if downloaded wallpaper is ok
+#TODO: make slideshow like transformations from one wallpaper to another
 
 #generate random date
 current_system = platform.system()
