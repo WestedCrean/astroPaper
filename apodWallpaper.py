@@ -14,6 +14,8 @@ import os
 import shutil
 import __main__
 import ctypes
+import cv2
+import numpy as np
 from calendar import monthrange 
 
 
@@ -127,6 +129,13 @@ if image_width < screen_width
     use opencv to flip it sideways, resolution is ok so it's just about it
 now just cut the most interesting spot on the image into screen_height*screen_width resolution and voila
 '''
+def checkWallpaper(currentRandomWallpaper):
+    img = cv2.imread(currentRandomWallpaper, 1)
+    img_width = np.shape(img)[0]
+    img_height = np.shape(img)[1]
+    print("Image width: " + str(img_width))
+    print("Image height: " + str(img_height))
+    return True
 # ------------
 # here will go openCV code for cutting wallpaper
 #-------------
@@ -168,7 +177,7 @@ def getPath():
 
 def clearOldWallpapers(dir, lastWallpaperName): #add global wallpaper save folder string
     for file in os.listdir(dir):
-        if file != lastWallpaperName:    
+        if file != lastWallpaperName:
             if file.endswith('.jpg'):
                 os.remove(os.path.join(dir, file))
 
@@ -181,10 +190,13 @@ def main():
             print("Request Failed, trying again.")
     print("Downloaded") #checking if function did it's job
     #cleanOtherWallpapers
+    #checkWallpaper
     #editWallpaper
-    
-    wallpaperSetup(current_system)
-    clearOldWallpapers(getPath(), currentRandomWallpaper)
+    if(checkWallpaper(currentRandomWallpaper)):
+        wallpaperSetup(current_system)
+        #clearOldWallpapers(getPath(), currentRandomWallpaper)
+    else:
+        print("Sorry not sorry")
     #waitForAnotherRound
     pass
 main()
