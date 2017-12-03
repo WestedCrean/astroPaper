@@ -23,7 +23,7 @@ from calendar import monthrange
 #TODO: set Linux wallpaper, probably only gnome and unity
 #TODO: check if downloaded wallpaper is ok
 #TODO: make slideshow like transformations from one wallpaper to another
-
+#TODO: UI and "add to favourites" button
 #generate random date
 current_system = platform.system()
 print("Current system: ", current_system)
@@ -115,30 +115,38 @@ def _get_apod():
             break
         except urllib.error.HTTPError:
             print("Request Failed, trying again.")
-
-#-------------
-# here will go openCV code for deciding if image is "pretty" (suitable for a wallpaper)
-#-------------
+        except urllib.request.http.client.BadStatusLine:
+            print("Request Failed, trying again.")
 '''
 pseudocode:
-if imageResolution < screen_width*screen_height:
-    download another image
 if there is a lot of text:
     downlaod another image
 if image_width < screen_width
     use opencv to flip it sideways, resolution is ok so it's just about it
 now just cut the most interesting spot on the image into screen_height*screen_width resolution and voila
 '''
-def checkWallpaper(currentRandomWallpaper):
+def isWallpaperPretty(currentRandomWallpaper):
+    #-------------
+    # here will go openCV code for deciding if image is "pretty" (suitable for a wallpaper)
+    #-------------
     img = cv2.imread(currentRandomWallpaper, 1)
     img_width = np.shape(img)[0]
     img_height = np.shape(img)[1]
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    print("Current screen's width: " + str(screen_width))
+    print("Current screen's height: " + str(screen_height))
     print("Image width: " + str(img_width))
     print("Image height: " + str(img_height))
+    if(img_width < screen_width and img_height < screen_height):
+        # image resolution is smaller than target resolution
+        return False
     return True
-# ------------
-# here will go openCV code for cutting wallpaper
-#-------------
+
+#def pimpMyWallpaper(currentRandomWallpaper):
+    # ------------
+    # here will go openCV code for cutting wallpaper
+    #-------------
 
 
 def wallpaperSetup(current_system):
@@ -182,21 +190,17 @@ def clearOldWallpapers(dir, lastWallpaperName): #add global wallpaper save folde
                 os.remove(os.path.join(dir, file))
 
 def main():
-    while True:
-        try:
-            _get_apod()
-            break
-        except urllib.request.http.client.BadStatusLine:
-            print("Request Failed, trying again.")
-    print("Downloaded") #checking if function did it's job
+    _get_apod()
+    print("Downloaded")
+    #checking if function did it's job
     #cleanOtherWallpapers
     #checkWallpaper
     #editWallpaper
-    if(checkWallpaper(currentRandomWallpaper)):
-        wallpaperSetup(current_system)
-        #clearOldWallpapers(getPath(), currentRandomWallpaper)
-    else:
-        print("Sorry not sorry")
+    while not isWallpaperPretty(currentRandomWallpaper):
+        print("Wallpaper isn't pretty, getting another one")
+        _get_apod()
+    wallpaperSetup(current_system)
+    #clearOldWallpapers(getPath(), currentRandomWallpaper)
     #waitForAnotherRound
     pass
 main()
