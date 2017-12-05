@@ -22,6 +22,8 @@ from calendar import monthrange
 #TODO: make clearOldWallpapers() method clear every image except the last one
 #TODO: set Linux wallpaper, probably only gnome and unity
 #TODO: check if downloaded wallpaper is ok
+#TODO: if downloaded wallpaper is a panorama (for example) and image ratio is not right,
+#have it filled with black spaces
 #TODO: make slideshow like transformations from one wallpaper to another
 #TODO: UI and "add to favourites" button
 #generate random date
@@ -130,16 +132,17 @@ def isWallpaperPretty(currentRandomWallpaper):
     # here will go openCV code for deciding if image is "pretty" (suitable for a wallpaper)
     #-------------
     img = cv2.imread(currentRandomWallpaper, 1)
-    img_width = np.shape(img)[0]
-    img_height = np.shape(img)[1]
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
+    img_width = np.shape(img)[1]
+    img_height = np.shape(img)[0]
+    screen_width = root.winfo_screenwidth() - 150 #tolerance
+    screen_height = root.winfo_screenheight() - 150 #tolerance
     print("Current screen's width: " + str(screen_width))
     print("Current screen's height: " + str(screen_height))
     print("Image width: " + str(img_width))
     print("Image height: " + str(img_height))
-    if(img_width < screen_width and img_height < screen_height):
+    if(img_width < screen_width or img_height < screen_height):
         # image resolution is smaller than target resolution
+        print("Fuck small images")
         return False
     return True
 
