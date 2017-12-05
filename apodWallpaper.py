@@ -192,7 +192,6 @@ def clearOldWallpapers(dir, lastWallpaperName): #add global wallpaper save folde
 def main():
     _get_apod()
     print("Downloaded")
-    #checking if function did it's job
     #cleanOtherWallpapers
     #checkWallpaper
     #editWallpaper
