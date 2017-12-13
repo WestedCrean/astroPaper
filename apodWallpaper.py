@@ -146,10 +146,14 @@ def isWallpaperPretty(currentRandomWallpaper):
         return False
     return True
 
-#def pimpMyWallpaper(currentRandomWallpaper):
+def pimpMyWallpaper(currentRandomWallpaper):
     # ------------
     # here will go openCV code for cutting wallpaper
     #-------------
+    if(img_width < img_height):
+        print("flip")
+    if(img_width/img_height > 2.5):
+        print("shrink image to screen and fill the rest with black paint")
 
 
 def wallpaperSetup(current_system):
