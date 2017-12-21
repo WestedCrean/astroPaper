@@ -116,9 +116,9 @@ def _get_apod():
                 return 
             break
         except urllib.error.HTTPError:
-            print("Request Failed, trying again.")
+            print("Request Failed, trying again. - urllib.error.HTTPError")
         except urllib.request.http.client.BadStatusLine:
-            print("Request Failed, trying again.")
+            print("Request Failed, trying again. - urllib.request.http.client.BadStatusLine")
 '''
 pseudocode:
 if there is a lot of text:
@@ -184,6 +184,11 @@ def wallpaperSetup(current_system):
     
     if current_system == "Linux":
         print("Linux script")
+        try:
+            os.system("export GIO_EXTRA_MODULES=/usr/lib/x86_64-linux-gnu/gio/modules/")
+            os.system("gsettings set org.gnome.desktop.background picture-uri file:/" + wallpaper_path)
+        except:
+            print("gsettings not working")
 
 def getPath():
     wallpaper_path = os.path.abspath(__file__)
