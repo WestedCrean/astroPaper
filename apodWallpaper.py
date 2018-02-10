@@ -74,42 +74,35 @@ def _random_apod_link():
     _apod_url = "https://apod.nasa.gov/apod/ap" + random_date + ".html"
     return _apod_url
 
-def _get_image_link():
-    while True:
-        try:
-            while True:
-                try:
-                    html_page = urllib.request.urlopen(_random_apod_link())#sometime this line throws urllib2.HTTPError: HTTP Error 404: Not Found
-                    break
-                except urllib.error.HTTPError:
-                    print("Request Failed, trying again with different link")
-            html_page = str(html_page.read())
-            templink = re.search(r"href=[\\'\"]?([^\'\" >]+)?(.jpg|.jpeg|.png)", html_page)
-            if templink:
-                templink = templink.group(0)[6:]
-            directlink = "https://apod.nasa.gov/apod/" + templink #sometimes this line throws 
-            #UnboundLocalError: local variable 'templink' referenced before assignment
-            # THIS IS CAUSED when link is not an image
-            break
-        except UnboundLocalError:
-            print("Link isn't an image, trying again with different one.")
+def _get_image_link(url):
+    try:
+        html_page = urllib.request.urlopen(url)#sometime this line throws urllib2.HTTPError: HTTP Error 404: Not Found
+    except urllib.error.HTTPError:
+        print("Request Failed, trying again with different link")
+    try:
+        html_page = str(html_page.read())
+        templink = re.search(r"href=[\\'\"]?([^\'\" >]+)?(.jpg|.jpeg|.png)", html_page)
+        if templink:
+            templink = templink.group(0)[6:]
+        directlink = "https://apod.nasa.gov/apod/" + templink #sometimes this line throws 
+        #UnboundLocalError: local variable 'templink' referenced before assignment
+        # THIS IS CAUSED when link is not an image
+    except UnboundLocalError:
+        print("Link isn't an image, trying again with different one.")
     return directlink
     
-def _get_apod():
+def _get_apod(url):
     global currentRandomWallpaper
-    url = _get_image_link()
     file_name = url.split('/')[-1]
     currentRandomWallpaper = file_name
     print("Downloading ...")
-    while True:
-        try:
+    try:
             with urllib.request.urlopen(url) as response, open(file_name, 'wb') as out_file:
                 shutil.copyfileobj(response, out_file)
                 return 
-            break
-        except urllib.error.HTTPError:
+    except urllib.error.HTTPError:
             print("Request Failed, trying again.")
-        except urllib.request.http.client.BadStatusLine:
+    except urllib.request.http.client.BadStatusLine:
             print("Request Failed, trying again.")
 '''
 pseudocode:
@@ -126,8 +119,8 @@ def isWallpaperPretty(currentRandomWallpaper):
     img = cv2.imread(currentRandomWallpaper, 1)
     img_width = np.shape(img)[1]
     img_height = np.shape(img)[0]
-    screen_width = root.winfo_screenwidth() - 150 #tolerance
-    screen_height = root.winfo_screenheight() - 150 #tolerance
+    screen_width = root.winfo_screenwidth() #tolerance
+    screen_height = root.winfo_screenheight() #tolerance
     print("Current screen's width: " + str(screen_width))
     print("Current screen's height: " + str(screen_height))
     print("Image width: " + str(img_width))
@@ -136,6 +129,10 @@ def isWallpaperPretty(currentRandomWallpaper):
         # image resolution is smaller than target resolution
         print("Image resolution is smaller than target resolution")
         return False
+    if(img_height > img_width):
+        #rotate
+        print("Rotating!")
+        np.transpose(img)
     return True
 
 def pimpMyWallpaper(currentRandomWallpaper):
@@ -163,26 +160,28 @@ def wallpaperSetup(current_system):
         print("Windows script")
         try:
             import ctypes
+            SPI_SETDESKTOPWALLPAPER = 20
+            ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKTOPWALLPAPER, 0, wallpaper_path, 0)
+            print("Wallpaper set up!")
         except:
             print("Ctypes not installed")
-        SPI_SETDESKTOPWALLPAPER = 20
-        ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKTOPWALLPAPER, 0, wallpaper_path, 0)
-        print("Desktop background set up")
         
     if current_system == "Darwin":
         print("MacOS script")
         try:
             from appscript import app, mactypes
+            app('Finder').desktop_picture.set(mactypes.File(wallpaper_path))
+            print("Wallpaper set up!")
         except:
             print("Appscript not installed.")
         #macos set up
-        app('Finder').desktop_picture.set(mactypes.File(wallpaper_path))
     
     if current_system == "Linux":
         print("Linux script")
         try:
             os.system("export GIO_EXTRA_MODULES=/usr/lib/x86_64-linux-gnu/gio/modules/")
             os.system("gsettings set org.gnome.desktop.background picture-uri file:/" + wallpaper_path)
+            print("Wallpaper set up!")
         except:
             print("gsettings not working")
 
@@ -198,15 +197,21 @@ def clearOldWallpapers(dir, lastWallpaperName): #add global wallpaper save folde
                 os.remove(os.path.join(dir, file))
 
 def main():
-    _get_apod()
-    print("Downloaded")
+    while True:
+        try:
+            sitelink = _random_apod_link()
+            imagelink = _get_image_link(sitelink)
+            _get_apod(imagelink)
+            print("Downloaded")
+            while not isWallpaperPretty(currentRandomWallpaper):
+                raise Exception("Wallpaper isn't pretty, getting another one")
+            wallpaperSetup(current_system)
+            break
+        except:
+            print("Sequence failed, trying again")
     #cleanOtherWallpapers
     #checkWallpaper
     #editWallpaper
-    while not isWallpaperPretty(currentRandomWallpaper):
-        print("Wallpaper isn't pretty, getting another one")
-        _get_apod()
-    wallpaperSetup(current_system)
     #clearOldWallpapers(getPath(), currentRandomWallpaper)
     #waitForAnotherRound
     pass
