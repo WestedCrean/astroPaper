@@ -1,19 +1,16 @@
 import datetime
 import random
 import platform
-from bs4 import BeautifulSoup
 import re
 import urllib.request
 import urllib.error
 import urllib.parse
-import lxml
 import tkinter as tk
 import struct
 import subprocess
 import os
 import shutil
 import __main__
-import ctypes
 import cv2
 import numpy as np
 from calendar import monthrange 
@@ -86,14 +83,10 @@ def _get_image_link():
                     break
                 except urllib.error.HTTPError:
                     print("Request Failed, trying again with different link")
-            try:
-                soup = BeautifulSoup(html_page, "lxml")
-            except:
-                print("lxml not found, using built-in html.parser")
-                soup = BeautifulSoup(html_page, "html.parser")
-            for link in soup.findAll('a', attrs={'href': re.compile("\b*?image/")}):
-                link.get('href')
-                templink = link.get('href')
+            html_page = str(html_page.read())
+            templink = re.search(r"href=[\\'\"]?([^\'\" >]+)?(.jpg|.jpeg|.png)", html_page)
+            if templink:
+                templink = templink.group(0)[6:]
             directlink = "https://apod.nasa.gov/apod/" + templink #sometimes this line throws 
             #UnboundLocalError: local variable 'templink' referenced before assignment
             # THIS IS CAUSED when link is not an image
@@ -168,6 +161,10 @@ def wallpaperSetup(current_system):
     if current_system == "Windows":
         #windows set up
         print("Windows script")
+        try:
+            import ctypes
+        except:
+            print("Ctypes not installed")
         SPI_SETDESKTOPWALLPAPER = 20
         ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKTOPWALLPAPER, 0, wallpaper_path, 0)
         print("Desktop background set up")
