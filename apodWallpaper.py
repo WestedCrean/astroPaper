@@ -82,11 +82,10 @@ def _get_image_link():
         try:
             while True:
                 try:
-                    html_page = urllib.request.urlopen(_random_apod_link()) #sometime this line throws
+                    html_page = urllib.request.urlopen(_random_apod_link())#sometime this line throws urllib2.HTTPError: HTTP Error 404: Not Found
                     break
                 except urllib.error.HTTPError:
                     print("Request Failed, trying again with different link")
-    #urllib2.HTTPError: HTTP Error 404: Not Found
             try:
                 soup = BeautifulSoup(html_page, "lxml")
             except:
@@ -116,9 +115,9 @@ def _get_apod():
                 return 
             break
         except urllib.error.HTTPError:
-            print("Request Failed, trying again. - urllib.error.HTTPError")
+            print("Request Failed, trying again.")
         except urllib.request.http.client.BadStatusLine:
-            print("Request Failed, trying again. - urllib.request.http.client.BadStatusLine")
+            print("Request Failed, trying again.")
 '''
 pseudocode:
 if there is a lot of text:
@@ -142,7 +141,7 @@ def isWallpaperPretty(currentRandomWallpaper):
     print("Image height: " + str(img_height))
     if(img_width < screen_width or img_height < screen_height):
         # image resolution is smaller than target resolution
-        print("Fuck small images")
+        print("Image resolution is smaller than target resolution")
         return False
     return True
 
