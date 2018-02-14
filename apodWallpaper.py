@@ -1,3 +1,7 @@
+#! /usr/bin/env python3
+# ------ NASA's Astronomy Picture of the Day ------
+# -------- Random wallpaper by Wiktor Flis --------
+
 import datetime
 import random
 import platform
@@ -23,6 +27,7 @@ from calendar import monthrange
 #have it filled with black spaces
 #TODO: make slideshow like transformations from one wallpaper to another
 #TODO: UI and "add to favourites" button
+
 #generate random date
 current_system = platform.system()
 print("Current system: ", current_system)
@@ -79,6 +84,8 @@ def _get_image_link(url):
         html_page = urllib.request.urlopen(url)#sometime this line throws urllib2.HTTPError: HTTP Error 404: Not Found
     except urllib.error.HTTPError:
         print("Request Failed, trying again with different link")
+    except:
+        print("upper _get_image_link() fucked up")
     try:
         html_page = str(html_page.read())
         templink = re.search(r"href=[\\'\"]?([^\'\" >]+)?(.jpg|.jpeg|.png)", html_page)
@@ -89,6 +96,8 @@ def _get_image_link(url):
         # THIS IS CAUSED when link is not an image
     except UnboundLocalError:
         print("Link isn't an image, trying again with different one.")
+    except:
+        print("lower _get_image_link() fucked up")
     return directlink
     
 def _get_apod(url):
@@ -97,13 +106,15 @@ def _get_apod(url):
     currentRandomWallpaper = file_name
     print("Downloading ...")
     try:
-            with urllib.request.urlopen(url) as response, open(file_name, 'wb') as out_file:
+        with urllib.request.urlopen(url) as response, open(file_name, 'wb') as out_file:
                 shutil.copyfileobj(response, out_file)
                 return 
     except urllib.error.HTTPError:
-            print("Request Failed, trying again.")
+        print("Request Failed, trying again.")
     except urllib.request.http.client.BadStatusLine:
-            print("Request Failed, trying again.")
+        print("Request Failed, trying again.")
+    except:
+        print("_get_apod() fucked up")
 '''
 pseudocode:
 if there is a lot of text:
@@ -117,8 +128,7 @@ def isWallpaperPretty(currentRandomWallpaper):
     # here will go openCV code for deciding if image is "pretty" (suitable for a wallpaper)
     #-------------
     img = cv2.imread(currentRandomWallpaper, 1)
-    img_width = np.shape(img)[1]
-    img_height = np.shape(img)[0]
+    img_height, img_width = img.shape[0], img.shape[1]
     screen_width = root.winfo_screenwidth() #tolerance
     screen_height = root.winfo_screenheight() #tolerance
     print("Current screen's width: " + str(screen_width))
@@ -132,6 +142,7 @@ def isWallpaperPretty(currentRandomWallpaper):
     if(img_height > img_width):
         #rotate
         print("Rotating!")
+
         np.transpose(img)
     return True
 
@@ -198,25 +209,20 @@ def clearOldWallpapers(dir, lastWallpaperName): #add global wallpaper save folde
 
 def main():
     while True:
-        try:
-            sitelink = _random_apod_link()
-            imagelink = _get_image_link(sitelink)
-            _get_apod(imagelink)
-            print("Downloaded")
-            while not isWallpaperPretty(currentRandomWallpaper):
-                raise Exception("Wallpaper isn't pretty, getting another one")
+        sitelink = _random_apod_link()
+        imagelink = _get_image_link(sitelink)
+        _get_apod(imagelink)
+        print("Downloaded")
+        if(isWallpaperPretty(currentRandomWallpaper)):
             wallpaperSetup(current_system)
             break
-        except:
-            print("Sequence failed, trying again")
+        print("Wallpaper isn't good, getting another one")
     #cleanOtherWallpapers
     #checkWallpaper
     #editWallpaper
     #clearOldWallpapers(getPath(), currentRandomWallpaper)
     #waitForAnotherRound
     pass
-main()
-'''
+
 if __name__ == "__main__":
-    main(sys.argv)
-'''
+    main()
