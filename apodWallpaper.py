@@ -17,7 +17,7 @@ import shutil
 import __main__
 import cv2
 import numpy as np
-from calendar import monthrange 
+from calendar import monthrange
 
 
 #TODO: make clearOldWallpapers() method clear every image except the last one
@@ -52,7 +52,7 @@ def _random_apod_link():
     if year == now.year % 100 :
         may_be_current_date = True
     random_date += year * 10000
-    
+
     #rolling month
     if may_be_current_date:
         #if current year
@@ -62,7 +62,7 @@ def _random_apod_link():
             may_be_current_date = False
     else:
         month = random.randint(1, 12)
-    
+
     random_date += month * 100
 
     #rolling day
@@ -91,7 +91,7 @@ def _get_image_link(url):
         templink = re.search(r"href=[\\'\"]?([^\'\" >]+)?(.jpg|.jpeg|.png)", html_page)
         if templink:
             templink = templink.group(0)[6:]
-        directlink = "https://apod.nasa.gov/apod/" + templink #sometimes this line throws 
+        directlink = "https://apod.nasa.gov/apod/" + templink #sometimes this line throws
         #UnboundLocalError: local variable 'templink' referenced before assignment
         # THIS IS CAUSED when link is not an image
     except UnboundLocalError:
@@ -99,7 +99,7 @@ def _get_image_link(url):
     except:
         print("lower _get_image_link() fucked up")
     return directlink
-    
+
 def _get_apod(url):
     global currentRandomWallpaper
     file_name = url.split('/')[-1]
@@ -108,7 +108,7 @@ def _get_apod(url):
     try:
         with urllib.request.urlopen(url) as response, open(file_name, 'wb') as out_file:
                 shutil.copyfileobj(response, out_file)
-                return 
+                return
     except urllib.error.HTTPError:
         print("Request Failed, trying again.")
     except urllib.request.http.client.BadStatusLine:
@@ -176,7 +176,7 @@ def wallpaperSetup(current_system):
             print("Wallpaper set up!")
         except:
             print("Ctypes not installed")
-        
+
     if current_system == "Darwin":
         print("MacOS script")
         try:
@@ -186,7 +186,7 @@ def wallpaperSetup(current_system):
         except:
             print("Appscript not installed.")
         #macos set up
-    
+
     if current_system == "Linux":
         print("Linux script")
         try:
@@ -203,8 +203,9 @@ def getPath():
 
 def clearOldWallpapers(dir, lastWallpaperName): #add global wallpaper save folder string
     for file in os.listdir(dir):
-        if file != lastWallpaperName:
-            if file.endswith('.jpg'):
+        if(os.path.getctime((os.path.join(dir,file))) > 10):
+        if(file != "apodWallpaper.py"):
+            if file.endswith('.jpg' or '.png'):
                 os.remove(os.path.join(dir, file))
 
 def main():
@@ -215,9 +216,9 @@ def main():
         print("Downloaded")
         if(isWallpaperPretty(currentRandomWallpaper)):
             wallpaperSetup(current_system)
+            clearOldWallpapers(getPath(), currentRandomWallpaper)
             break
         print("Wallpaper isn't good, getting another one")
-    #cleanOtherWallpapers
     #checkWallpaper
     #editWallpaper
     #clearOldWallpapers(getPath(), currentRandomWallpaper)
