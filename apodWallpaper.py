@@ -198,8 +198,7 @@ def wallpaperSetup(current_system):
     if current_system == "Linux":
         print("Linux script")
         try:
-            os.system("export GIO_EXTRA_MODULES=/usr/lib/x86_64-linux-gnu/gio/modules/")
-            os.system("gsettings set org.gnome.desktop.background picture-uri file:/" + wallpaper_path)
+           os.system("gsettings set org.gnome.desktop.background picture-uri file:///" + wallpaper_path)
             print("Wallpaper set up!")
         except:
             print("gsettings not working")
