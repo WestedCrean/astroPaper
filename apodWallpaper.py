@@ -29,17 +29,23 @@ from calendar import monthrange
 #TODO: UI and "add to favourites" button
 
 #generate random date
-current_system = platform.system()
-print("Current system: ", current_system)
-root = tk.Tk()
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
-print("Current screen's width: " + str(screen_width))
-print("Current screen's height: " + str(screen_height))
+def systemInfo():
+    current_system = platform.system()
+    print("Current system: ", current_system)
+    root = tk.Tk()
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    print("Current screen's width: " + str(screen_width))
+    print("Current screen's height: " + str(screen_height))
+# astropaper 2.0
+
+def getValidDate():
+    
 
 #-------------
-# getting image functions
+# old getting image functions
 #-------------
+
 def _random_apod_link():
     random.seed()
     now = datetime.datetime.now()
@@ -80,6 +86,7 @@ def _random_apod_link():
     return _apod_url
 
 def _get_image_link(url):
+    directlink = "https://apod.nasa.gov/apod/"
     try:
         html_page = urllib.request.urlopen(url)#sometime this line throws urllib2.HTTPError: HTTP Error 404: Not Found
     except urllib.error.HTTPError:
@@ -91,7 +98,7 @@ def _get_image_link(url):
         templink = re.search(r"href=[\\'\"]?([^\'\" >]+)?(.jpg|.jpeg|.png)", html_page)
         if templink:
             templink = templink.group(0)[6:]
-        directlink = "https://apod.nasa.gov/apod/" + templink #sometimes this line throws
+        directlink += templink #sometimes this line throws
         #UnboundLocalError: local variable 'templink' referenced before assignment
         # THIS IS CAUSED when link is not an image
     except UnboundLocalError:
@@ -115,6 +122,8 @@ def _get_apod(url):
         print("Request Failed, trying again.")
     except:
         print("_get_apod() fucked up")
+
+#def addToFavourites():
 '''
 pseudocode:
 if there is a lot of text:
@@ -128,7 +137,7 @@ def isWallpaperPretty(currentRandomWallpaper):
     # here will go openCV code for deciding if image is "pretty" (suitable for a wallpaper)
     #-------------
     img = cv2.imread(currentRandomWallpaper, 1)
-    img_height, img_width = img.shape[0], img.shape[1]
+    img_height, img_width = img.shape[0], img.shape[1] #not working well
     screen_width = root.winfo_screenwidth() #tolerance
     screen_height = root.winfo_screenheight() #tolerance
     print("Current screen's width: " + str(screen_width))
@@ -154,7 +163,6 @@ def pimpMyWallpaper(currentRandomWallpaper):
         print("flip")
     if(img_width/img_height > 2.5):
         print("shrink image to screen and fill the rest with black paint")
-
 
 def wallpaperSetup(current_system):
 
@@ -203,27 +211,26 @@ def getPath():
 
 def clearOldWallpapers(dir, lastWallpaperName): #add global wallpaper save folder string
     for file in os.listdir(dir):
-        if(os.path.getctime((os.path.join(dir,file))) > 10):
-        if(file != "apodWallpaper.py"):
+        if(file != "apodWallpaper.py" or file != maxfile):
             if file.endswith('.jpg' or '.png'):
                 os.remove(os.path.join(dir, file))
 
 def main():
     while True:
+        systemInfo()
         sitelink = _random_apod_link()
         imagelink = _get_image_link(sitelink)
         _get_apod(imagelink)
         print("Downloaded")
-        if(isWallpaperPretty(currentRandomWallpaper)):
-            wallpaperSetup(current_system)
-            clearOldWallpapers(getPath(), currentRandomWallpaper)
-            break
-        print("Wallpaper isn't good, getting another one")
+        wallpaperSetup(current_system)
+        #clearOldWallpapers(getPath(), currentRandomWallpaper)
+        break;
     #checkWallpaper
     #editWallpaper
     #clearOldWallpapers(getPath(), currentRandomWallpaper)
     #waitForAnotherRound
     pass
+
 
 if __name__ == "__main__":
     main()
