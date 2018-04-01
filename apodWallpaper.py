@@ -29,18 +29,18 @@ from calendar import monthrange
 #TODO: UI and "add to favourites" button
 
 #generate random date
-def systemInfo():
-    current_system = platform.system()
-    print("Current system: ", current_system)
-    root = tk.Tk()
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-    print("Current screen's width: " + str(screen_width))
-    print("Current screen's height: " + str(screen_height))
+
+current_system = platform.system()
+print("Current system: ", current_system)
+root = tk.Tk()
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
+print("Current screen's width: " + str(screen_width))
+print("Current screen's height: " + str(screen_height))
 # astropaper 2.0
 
 def getValidDate():
-    
+    pass
 
 #-------------
 # old getting image functions
@@ -198,7 +198,7 @@ def wallpaperSetup(current_system):
     if current_system == "Linux":
         print("Linux script")
         try:
-           os.system("gsettings set org.gnome.desktop.background picture-uri file:///" + wallpaper_path)
+            os.system("gsettings set org.gnome.desktop.background picture-uri file:///" + wallpaper_path)
             print("Wallpaper set up!")
         except:
             print("gsettings not working")
@@ -216,7 +216,7 @@ def clearOldWallpapers(dir, lastWallpaperName): #add global wallpaper save folde
 
 def main():
     while True:
-        systemInfo()
+        #systemInfo()
         sitelink = _random_apod_link()
         imagelink = _get_image_link(sitelink)
         _get_apod(imagelink)
