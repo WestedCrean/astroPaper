@@ -1,51 +1,54 @@
 body {
-  margin: 0;
-  padding: 0;
-  margin-top: 5px;
   overflow: hidden;
+  background-color: #110353;
+}
+.preview-container {
+  width: 100%;
+}
+
+.preview {
+  font-family: 'Segoe UI', Helvetica, Geneva, Verdana, sans-serif;
+  line-height: 200px;
+  display: block;
+  height: 270px;
+  width: 480px;
+  margin: 30px auto;
+  background-color: #e3e3e3;
+  text-align: center;
+  
+}
+
+.description {
+  font-family: 'Segoe UI', Helvetica, Geneva, Verdana, sans-serif;
+  color: #555555;
+  display: block;
+  margin: 20px auto;
+  text-align: center;
 }
 
 button {
-  margin: 0;
+  font-family: 'Segoe UI', Helvetica, Geneva, Verdana, sans-serif;
+  float: left;
+  cursor: pointer;
+
+  width: 400px;
+  height: 100px;
+  margin: 0 45px;
+  text-align: center;
+  font-size: 20px;
+  background-color: #14006b;
+
+  float: left;
+  cursor: pointer;
 }
 
-.CodeMirror {
-  margin: 0;
-  padding: 0;
+button:active{
+  background-color: #11015a;
 }
 
-.CodeMirror-scroll {
-  height: auto;
-  overflow-y: hidden;
-  overflow-x: auto;
-}
+.button-container{
+  display: block;
+  margin: 30px auto;
+  max-width: 100%;
 
-#editor {
-  position: absolute;
-  top: 37px;
-  bottom: 24px;
-  left: 0;
-  right: 0;
-  background: #262626;
-}
-
-.info {
-  font-family: monospace;
-  white-space: nowrap;
-  position: absolute;
-  bottom: 0;
-  background: #eee;
-  padding: 2px;
-  height: 20px;
-  left: 0;
-  right: 0;
-}
-
-.info label {
-  font-weight: bold;
-}
-
-.buttons {
-  padding: 2px;
-  height: 25px;
 }
