@@ -57,7 +57,7 @@ def getValidDate():
     if(may_be_current_date):
         day = random.randint(1, now.day + 1)
     else:
-        if(month == 02):
+        if(month == 2):
             if(abs(year - 16) % 4 == 0):
                 day = random.randint(1, 30)
             else:
@@ -77,15 +77,19 @@ def getValidDate():
     return random_date
 
 def getLink(date):
-    return "https://apod.nasa.gov/apod/ap" + date + ".html"
+    return "https://apod.nasa.gov/apod/ap" + str(date) + ".html"
 
 def crawlURL(url):
+    print("Trying to crawl url: " + url)
     directlink = "https://apod.nasa.gov/apod/"
     imglink = ""
-    try:
-        html_page = urllib.request.urlopen(url)#sometime this line throws urllib2.HTTPError: HTTP Error 404: Not Found
-    except urllib.error.HTTPError:
-        print("Request Failed, trying again with different link")
+    isOk = False
+    while(not isOk):
+        try:
+            html_page = urllib.request.urlopen(url)#sometime this line throws urllib2.HTTPError: HTTP Error 404: Not Found
+            isOk = True
+        except urllib.error.HTTPError:
+            print("Crawl Failed, retrying")
     try:
         html_page = str(html_page.read())
         iframe = re.search(r"iframe", html_page)
@@ -96,6 +100,8 @@ def crawlURL(url):
             directlink += imglink
         else:
             return -1
+    except:
+        print("crawlURL() exception")
     return directlink
 
 def downloadImage(url, path):
@@ -126,7 +132,7 @@ def mainRoutine(path):
     validFileFound = False
     while(not validFileFound):
         check = rollAWallpaper()
-        if(check not -1):
+        if(check != -1):
             validFileFound = True
     url = check
 
