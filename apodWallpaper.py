@@ -17,7 +17,6 @@ import shutil
 import __main__
 import cv2
 import numpy as np
-from calendar import monthrange
 
 
 #TODO: make clearOldWallpapers() method clear every image except the last one
@@ -37,78 +36,70 @@ screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
 print("Current screen's width: " + str(screen_width))
 print("Current screen's height: " + str(screen_height))
+
 # astropaper 2.0
 
 def getValidDate():
-    pass
-
-#-------------
-# old getting image functions
-#-------------
-
-def _random_apod_link():
     random.seed()
-    now = datetime.datetime.now()
-    random_date = 000000
-    #safety net so we won't get a date from the future
+    random_date = 000000 # TODO: delet dis
     may_be_current_date = False
+    now = datetime.datetime.now()
 
-    #rolling year
-    year = random.randint(7, now.year % 100) #7-17
-    if year == now.year % 100 :
+    year = random.randint(7, now.year % 100 + 1)
+    if year == now.year % 100:
         may_be_current_date = True
     random_date += year * 10000
-
-    #rolling month
-    if may_be_current_date:
-        #if current year
-        month = random.randint(1, now.month)
-        #here we get rid of the flag, for sure it's legit
-        if month != now.month:
-            may_be_current_date = False
+    if(may_be_current_date):
+        month = random.randint(1,now.month + 1)
     else:
-        month = random.randint(1, 12)
-
+        month = random.randint(1,13)
     random_date += month * 100
-
-    #rolling day
-    if may_be_current_date:
-        day = random.randint(1, now.day - 1)
+    if(may_be_current_date):
+        day = random.randint(1, now.day + 1)
     else:
-        month_range = monthrange(year, month) #to be sure
-        day = random.randint(month_range[0], month_range[1])
-        #print "day : ", temp
+        if(month == 02):
+            if(abs(year - 16) % 4 == 0):
+                day = random.randint(1, 30)
+            else:
+                day = random.randint(1, 29)
+        else:
+            if(month < 8):
+                if(not month%2):
+                    day = random.randint(1, 32)
+                else:
+                    day = random.randint(1, 31)
+            else:
+                if(month%2):
+                    day = random.randint(1, 32)
+                else:
+                    day = random.randint(1, 31)
     random_date += day
-    #convert to string
-    random_date = str('%06d' % random_date)
-    print("Date: " + random_date)
-    _apod_url = "https://apod.nasa.gov/apod/ap" + random_date + ".html"
-    return _apod_url
+    return random_date
 
-def _get_image_link(url):
+def getLink(date):
+    return "https://apod.nasa.gov/apod/ap" + date + ".html"
+
+def crawlURL(url):
     directlink = "https://apod.nasa.gov/apod/"
+    imglink = ""
     try:
         html_page = urllib.request.urlopen(url)#sometime this line throws urllib2.HTTPError: HTTP Error 404: Not Found
     except urllib.error.HTTPError:
         print("Request Failed, trying again with different link")
-    except:
-        print("upper _get_image_link() fucked up")
     try:
         html_page = str(html_page.read())
-        templink = re.search(r"href=[\\'\"]?([^\'\" >]+)?(.jpg|.jpeg|.png)", html_page)
-        if templink:
-            templink = templink.group(0)[6:]
-        directlink += templink #sometimes this line throws
-        #UnboundLocalError: local variable 'templink' referenced before assignment
-        # THIS IS CAUSED when link is not an image
-    except UnboundLocalError:
-        print("Link isn't an image, trying again with different one.")
-    except:
-        print("lower _get_image_link() fucked up")
+        iframe = re.search(r"iframe", html_page)
+        if(iframe):
+            return -1
+        imglink = re.search(r"href=[\\'\"]?([^\'\" >]+)?(.jpg|.jpeg|.png)", html_page)
+        if imglink:
+            directlink += imglink
+        else:
+            return -1
     return directlink
 
-def _get_apod(url):
-    global currentRandomWallpaper
+def downloadImage(url, path):
+    currentWallpaperPath = ""
     file_name = url.split('/')[-1]
     currentRandomWallpaper = file_name
     print("Downloading ...")
@@ -122,6 +113,24 @@ def _get_apod(url):
         print("Request Failed, trying again.")
     except:
         print("_get_apod() fucked up")
+
+    return currentWallpaperPath
+
+def rollAWallpaper():
+    date = getValidDate()
+    link = getLink(date)
+    check = crawlURL(link)
+    return check
+
+def mainRoutine(path):
+    validFileFound = False
+    while(not validFileFound):
+        check = rollAWallpaper()
+        if(check not -1):
+            validFileFound = True
+    url = check
+
+    return downloadImage(url, path) 
 
 #def addToFavourites():
 '''
@@ -155,24 +164,9 @@ def isWallpaperPretty(currentRandomWallpaper):
         np.transpose(img)
     return True
 
-def pimpMyWallpaper(currentRandomWallpaper):
-    # ------------
-    # here will go openCV code for cutting wallpaper
-    #-------------
-    if(img_width < img_height):
-        print("flip")
-    if(img_width/img_height > 2.5):
-        print("shrink image to screen and fill the rest with black paint")
-
-def wallpaperSetup(current_system):
-
-
-    print("Setting up the wallpaper")
-    wallpaper_path = os.path.abspath(__file__)
-    wallpaper_path = re.sub(r'apodWallpaper.py', '', wallpaper_path)
-    wallpaper_path = str(wallpaper_path) + str(currentRandomWallpaper)
-    print("Current random wallpaper absolute path : " + wallpaper_path)
-
+def wallpaperSetup(current_system, wallpaperPath):
+    print("wallpaperSetup")
+    wallpaper_path = getPath(wallpaper)
     #setting up the wallpaper, depending on a system
     if current_system == "Windows":
         #windows set up
@@ -203,9 +197,12 @@ def wallpaperSetup(current_system):
         except:
             print("gsettings not working")
 
-def getPath():
+def getPath(wallpaper):
+    #TODO make folder for photographs in another place
     wallpaper_path = os.path.abspath(__file__)
     wallpaper_path = re.sub(r'apodWallpaper.py', '', wallpaper_path)
+    wallpaper_path = str(wallpaper_path) + str(wallpaper)
+    print("Current random wallpaper absolute path : " + wallpaper_path)
     return wallpaper_path
 
 def clearOldWallpapers(dir, lastWallpaperName): #add global wallpaper save folder string
@@ -215,20 +212,10 @@ def clearOldWallpapers(dir, lastWallpaperName): #add global wallpaper save folde
                 os.remove(os.path.join(dir, file))
 
 def main():
-    while True:
-        #systemInfo()
-        sitelink = _random_apod_link()
-        imagelink = _get_image_link(sitelink)
-        _get_apod(imagelink)
-        print("Downloaded")
-        wallpaperSetup(current_system)
-        #clearOldWallpapers(getPath(), currentRandomWallpaper)
-        break;
-    #checkWallpaper
-    #editWallpaper
-    #clearOldWallpapers(getPath(), currentRandomWallpaper)
-    #waitForAnotherRound
-    pass
+    path = "/Users/WestedCrean/Pictures/"
+    wallpaper = mainRoutine(path)
+    wallpaperSetup(wallpaper)
+    print("Done")
 
 
 if __name__ == "__main__":
