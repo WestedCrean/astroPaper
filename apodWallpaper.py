@@ -34,47 +34,46 @@ print("Current system: ", current_system)
 root = tk.Tk()
 screen_width = root.winfo_screenwidth()
 screen_height = root.winfo_screenheight()
-print("Current screen's width: " + str(screen_width))
-print("Current screen's height: " + str(screen_height))
-
+print("Current screen's width: " + str(screen_width) + " Current screen's height: " + str(screen_height))
 # astropaper 2.0
 
 def getValidDate():
     random.seed()
-    random_date = 000000 # TODO: delet dis
+    randomDate = 000000 # TODO: delet dis
     may_be_current_date = False
     now = datetime.datetime.now()
 
-    year = random.randint(7, now.year % 100 + 1)
+    year = random.randint(7, now.year % 100)
     if year == now.year % 100:
         may_be_current_date = True
-    random_date += year * 10000
+    randomDate += year * 10000
     if(may_be_current_date):
-        month = random.randint(1,now.month + 1)
+        month = random.randint(1,now.month)
     else:
         month = random.randint(1,13)
-    random_date += month * 100
+    randomDate += month * 100
     if(may_be_current_date):
-        day = random.randint(1, now.day + 1)
+        day = random.randint(1, now.day)
     else:
         if(month == 2):
             if(abs(year - 16) % 4 == 0):
-                day = random.randint(1, 30)
-            else:
                 day = random.randint(1, 29)
+            else:
+                day = random.randint(1, 28)
         else:
             if(month < 8):
                 if(not month%2):
-                    day = random.randint(1, 32)
-                else:
                     day = random.randint(1, 31)
+                else:
+                    day = random.randint(1, 30)
             else:
                 if(month%2):
-                    day = random.randint(1, 32)
-                else:
                     day = random.randint(1, 31)
-    random_date += day
-    return random_date
+                else:
+                    day = random.randint(1, 30)
+    randomDate += day
+    print("random date: " + str(randomDate))
+    return randomDate
 
 def getLink(date):
     return "https://apod.nasa.gov/apod/ap" + str(date) + ".html"
@@ -83,44 +82,39 @@ def crawlURL(url):
     print("Trying to crawl url: " + url)
     directlink = "https://apod.nasa.gov/apod/"
     imglink = ""
-    isOk = False
-    while(not isOk):
+    success = False
+    while(not success):
         try:
+            print("Inside while loop")
             html_page = urllib.request.urlopen(url)#sometime this line throws urllib2.HTTPError: HTTP Error 404: Not Found
-            isOk = True
+            success = True
         except urllib.error.HTTPError:
-            print("Crawl Failed, retrying")
-    try:
-        html_page = str(html_page.read())
-        iframe = re.search(r"iframe", html_page)
-        if(iframe):
+            print("Crawl Failed, retrying ((crawlURL().exception.HTTPError))")
             return -1
-        imglink = re.search(r"href=[\\'\"]?([^\'\" >]+)?(.jpg|.jpeg|.png)", html_page)
-        if imglink:
-            directlink += imglink
-        else:
-            return -1
-    except:
-        print("crawlURL() exception")
+    html_page = str(html_page.read())
+    
+    imglink = re.search(r"href=[\\'\"]?([^\'\" >]+)?(.jpg|.jpeg|.png)", html_page)
+    if imglink:
+        imglink = imglink.group(0)[6:]
+        directlink += imglink
     return directlink
 
-def downloadImage(url, path):
-    currentWallpaperPath = ""
+def downloadImage(url):
+    global currentRandomWallpaper
     file_name = url.split('/')[-1]
     currentRandomWallpaper = file_name
-    print("Downloading ...")
+    print("Downloading " + url + " ...")
     try:
         with urllib.request.urlopen(url) as response, open(file_name, 'wb') as out_file:
                 shutil.copyfileobj(response, out_file)
                 return
     except urllib.error.HTTPError:
-        print("Request Failed, trying again.")
-    except urllib.request.http.client.BadStatusLine:
-        print("Request Failed, trying again.")
-    except:
-        print("_get_apod() fucked up")
-
-    return currentWallpaperPath
+        print("Request Failed, trying again. (downloadImage().exception.HTTPError)")
+    except Exception:
+        print("Request Failed, trying again. (downloadImage().exception)")
+        pass
+    return currentRandomWallpaper
+    
 
 def rollAWallpaper():
     date = getValidDate()
@@ -128,15 +122,20 @@ def rollAWallpaper():
     check = crawlURL(link)
     return check
 
-def mainRoutine(path):
+def mainRoutine():
     validFileFound = False
-    while(not validFileFound):
-        check = rollAWallpaper()
-        if(check != -1):
-            validFileFound = True
-    url = check
+    downloadSuccess = False
+    while(not downloadSuccess):
+        while(not validFileFound):
+            check = rollAWallpaper()
+            if(check != -1):
+                validFileFound = True
+        url = check
 
-    return downloadImage(url, path) 
+        wallpaper = downloadImage(url)
+        downloadSuccess = True
+    return str(wallpaper)
+        
 
 #def addToFavourites():
 '''
@@ -170,7 +169,7 @@ def isWallpaperPretty(currentRandomWallpaper):
         np.transpose(img)
     return True
 
-def wallpaperSetup(current_system, wallpaperPath):
+def wallpaperSetup(current_system, wallpaper):
     print("wallpaperSetup")
     wallpaper_path = getPath(wallpaper)
     #setting up the wallpaper, depending on a system
@@ -188,8 +187,8 @@ def wallpaperSetup(current_system, wallpaperPath):
     if current_system == "Darwin":
         print("MacOS script")
         try:
-            from appscript import app, mactypes
-            app('Finder').desktop_picture.set(mactypes.File(wallpaper_path))
+            setWallpaperCommand = "osascript -e 'tell application \"Finder\" to set desktop picture to POSIX file \"" + wallpaper_path + "\"'"
+            os.system(setWallpaperCommand)
             print("Wallpaper set up!")
         except:
             print("Appscript not installed.")
@@ -218,10 +217,13 @@ def clearOldWallpapers(dir, lastWallpaperName): #add global wallpaper save folde
                 os.remove(os.path.join(dir, file))
 
 def main():
+
     path = "/Users/WestedCrean/Pictures/"
-    wallpaper = mainRoutine(path)
-    wallpaperSetup(wallpaper)
+    wallpaper = ""
+    wallpaper += mainRoutine()
+    wallpaperSetup(current_system, wallpaper)
     print("Done")
+    
 
 
 if __name__ == "__main__":
