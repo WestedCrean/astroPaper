@@ -134,7 +134,6 @@ def mainRoutine():
 
         wallpaper = downloadImage(url)
         downloadSuccess = True
-    return str(wallpaper)
         
 
 #def addToFavourites():
@@ -220,8 +219,9 @@ def main():
 
     path = "/Users/WestedCrean/Pictures/"
     wallpaper = ""
-    wallpaper += mainRoutine()
-    wallpaperSetup(current_system, wallpaper)
+    mainRoutine()
+    
+    wallpaperSetup(current_system, currentRandomWallpaper)
     print("Done")
     
 
