@@ -1,26 +1,57 @@
-const {app, BrowserWindow} = require('electron');
+// main.js
 
-let mainWindow;
+const electron = require('electron')
+const app = electron.app
+const BrowserWindow = electron.BrowserWindow
+const path = require('path')
 
-// Quit when all windows are closed.
-app.on('window-all-closed', function() {
-  app.quit();
-});
-
-// This method will be called when Electron has done everything
-// initialization and ready for creating browser windows.
-app.on('ready', function() {
-  // Create the browser window.
+let mainWindow = null
+const createWindow = () => {
   mainWindow = new BrowserWindow({width: 1000, height: 600});
-
-  // and load the index.html of the app.
-  mainWindow.loadURL('file://' + __dirname + '/index.html');
-
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function() {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
-    mainWindow = null;
+  mainWindow.loadURL(require('url').format({
+    pathname: path.join(__dirname, 'index.html'),
+    protocol: 'file:',
+    slashes: true
+  }));
+  
+  mainWindow.on('closed', () => {
+    mainWindow = null
   });
+}
+app.on('ready', createWindow);
+app.on('window-all-closed', () => {
+    app.quit()
 });
+app.on('activate', () => {
+  if (mainWindow === null) {
+    createWindow()
+  }
+});
+
+// Python
+
+let pyProc = null
+let pyPort = null
+
+const selectPort = () => {
+  pyPort = 4242
+  return pyPort
+}
+
+const createPyProc = () => {
+  let port = '' + selectPort()
+  let script = path.join(__dirname, 'astroPaper', 'api.py')
+  pyProc = require('child_process').spawn('python', [script, port])
+  if (pyProc != null) {
+    console.log('child process success')
+  }
+}
+
+const exitPyProc = () => {
+  pyProc.kill()
+  pyProc = null
+  pyPort = null
+}
+
+app.on('ready', createPyProc)
+app.on('will-quit', exitPyProc)
