@@ -16,7 +16,7 @@ screen_height = root.winfo_screenheight()
 print("Current screen's width: " + str(screen_width) + " Current screen's height: " + str(screen_height))
 
 class AstroPaperApi(object):
-    currentWallpaper = ""
+    global currentWallpaper
     def roll(self):
         """Download a random wallpaper from apod.nasa.gov"""
         try:
@@ -32,13 +32,17 @@ class AstroPaperApi(object):
                 downloadSuccess = True
             filename = url.split('/')[-1]
             self.currentWallpaper = filename
+            self.hasWallpaper = True
             return filename
         except Exception as e:
             print(e)
     def setup(self):
-        """Set up the latest downloaded wallpaper """
-        current_system = platform.system()
-        astroPaper.wallpaperSetup(current_system, image)
+        try:
+            """Set up the latest downloaded wallpaper """
+            current_system = platform.system()
+            astroPaper.wallpaperSetup(current_system, self.currentWallpaper)
+        except AttributeError:
+            print("Download a wallpaper first")
     def display(self, image):
         """Show downloaded wallpaper"""
         pass

@@ -53,5 +53,6 @@ const exitPyProc = () => {
   pyPort = null
 }
 
+
 app.on('ready', createPyProc)
 app.on('will-quit', exitPyProc)
