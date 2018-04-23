@@ -2,7 +2,7 @@
 
 AstroPaper is a Electron.js + Python app, serving random pictures from NASA's Astronomy Picture of The Day (http://apod.nasa.gov/)
 
-Feel free to fork it, tweak it and send a pull request! I plan to move from astronomy-only pictures to choosing your wallpaper genre
+Feel free to fork it, tweak it and send a pull request! I plan to move from astrophotography to other pictures also, to let a user choose his/her own wallpaper genre.
 
 ## ☑ TODO
 
@@ -15,3 +15,4 @@ Feel free to fork it, tweak it and send a pull request! I plan to move from astr
 - [ ] make better frontend with p5.js
 - [ ] delete old wallpapers
 - [ ] choose the right wallpapers to set up
+- [ ] automatically run the script after a certain amount of time
