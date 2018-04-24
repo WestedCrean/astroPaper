@@ -3,45 +3,38 @@
 const zerorpc = require("zerorpc");
 let client = new zerorpc.Client();
 client.connect("tcp://127.0.0.1:4242");
-/*
-let wallpaper = "";
-roll.addEventListener('click', () => {
-  client.invoke("roll", formula.value, (error, res) => {
+
+var wow = () => {
+  console.log("Listening for clicks");
+};
+
+wow();
+document.getElementById("roll").addEventListener("click", () => {
+  console.log("roll clicked");
+  client.invoke("roll", function(error, res, more) {
     if(error) {
-      console.error(error)
+        console.error(error);
     } else {
-      wallpaper = result.textContent;
+        console.log("UPDATE:", res);
+    }
+
+    if(!more) {
+        console.log("Done.");
     }
   })
 });
 
-setup.addEventListener('click', () => {
-    client.invoke("setup", formula.value, (error, res) => {
-      if(error) {
-        console.error(error)
-      }
-    })
-  });
-
-*/
-
-const exec = require('child_process').exec;
-const serverCall = 'zerorpc tcp://127.0.0.1:4242 ';
-let rollButton = document.getElementById('roll');
-let setupButton = document.getElementById('setup');
-rollButton.addEventListener = ('click', () => {
-	exec(String.join(serverCall,'roll'), (error, stdout, stderr) => {
-            console.log(`${stdout}`);
-            console.log(`${stderr}`);
-            if (error !== null) {
-                console.log(`exec error: ${error}`);
-            }})});
-setupButton.addEventListener = ('click', () => {
-  client.invoke("roll", (error,res) => {
+document.getElementById('setup').addEventListener('click', () => {
+  console.log("setup clicked");
+  client.invoke("setup", function(error, res, more) {
     if(error) {
-      console.error(error)
+        console.error(error);
+    } else {
+        console.log("UPDATE:", res);
+    }
+
+    if(!more) {
+        console.log("Done.");
     }
   })
 });
-rollButton.dispatchEvent(new Event('click'));
-setupButton.dispatchEvent(new Event('click'));
