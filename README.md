@@ -1,3 +1,18 @@
-# astroPaper
-If you are a bit like me, you certainly waste a lot of time choosing the right wallpaper for your desktop, preferably a picture of Andromeda galaxy or NGC 281.
-AstroPaper is basically a Python script wrapped in nice and sleek Electron.js GUI, serving random pictures from NASA's Astronomy Picture of The Day (http://apod.nasa.gov/)
+# 🚀💫🌔 astroPaper
+
+AstroPaper is a Electron.js + Python app, serving random pictures from NASA's Astronomy Picture of The Day (http://apod.nasa.gov/)
+
+Feel free to fork it, tweak it and send a pull request! I plan to move from astrophotography to other pictures also, to let a user choose his/her own wallpaper genre.
+
+## ☑ TODO
+
+- [X] python logic
+- [X] prototype frontend
+- [X] make Electron.js work
+- [X] add zerorpc
+- [ ] connect python/zerorpcserver with electron with frontend
+- [ ] add favourites button
+- [ ] make better frontend with p5.js
+- [ ] delete old wallpapers
+- [ ] choose the right wallpapers to set up
+- [ ] automatically run the script after a certain amount of time
