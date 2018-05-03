@@ -167,9 +167,8 @@ def isWallpaperPretty(currentRandomWallpaper):
         np.transpose(img)
     return True
 
-def wallpaperSetup(current_system, wallpaper):
+def wallpaperSetup(current_system, wallpaper_path):
     print("wallpaperSetup")
-    wallpaper_path = getPath(wallpaper)
     #setting up the wallpaper, depending on a system
     if current_system == "Windows":
         #windows set up
@@ -185,8 +184,8 @@ def wallpaperSetup(current_system, wallpaper):
     if current_system == "Darwin":
         print("MacOS script")
         try:
-            setWallpaperCommand = "osascript -e 'tell application \"Finder\" to set desktop picture to POSIX file \"" + wallpaper_path + "\"'"
-            os.system(setWallpaperCommand)
+            setWallpaperScript = """/usr/bin/osascript<<END tell application "Finder" set desktop picture to POSIX file "{}" end tell END"""
+            os.system(setWallpaperScript.format(wallpaper_path))
             print("Wallpaper set up!")
         except:
             print("osascript not working")
