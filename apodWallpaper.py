@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 # ------ NASA's Astronomy Picture of the Day ------
 # -------- Random wallpaper by Wiktor Flis --------
-
+#
 import datetime
 import random
 import platform
@@ -15,65 +15,29 @@ import subprocess
 import os
 import shutil
 import __main__
-import cv2
+#import cv2
 import numpy as np
 
-
-#TODO: make clearOldWallpapers() method clear every image except the last one
-#TODO: set Linux wallpaper, probably only gnome and unity
-#TODO: check if downloaded wallpaper is ok
-#TODO: if downloaded wallpaper is a panorama (for example) and image ratio is not right,
-#have it filled with black spaces
-#TODO: make slideshow like transformations from one wallpaper to another
-#TODO: UI and "add to favourites" button
-
-#generate random date
-
-current_system = platform.system()
-print("Current system: ", current_system)
-root = tk.Tk()
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
-print("Current screen's width: " + str(screen_width) + " Current screen's height: " + str(screen_height))
-# astropaper 2.0
-
 def getValidDate():
-    random.seed()
-    randomDate = 000000 # TODO: delet dis
-    may_be_current_date = False
-    now = datetime.datetime.now()
+    d = datetime.datetime.now()
+    year = random.randint(2004, d.year)
+    month = random.randint(1, 12)
+    day = random.randint(1, 31)
+    randomDate = '{}-{}-{}'.format(year,month,day)
+    try:
+        checkDate = lambda rdate : datetime.datetime.strptime(rdate, '%Y-%m-%d')
+        checkDate(randomDate)
+        print("Valid date!")
+        randomDate = randomDate.split('-')
+        #here
 
-    year = random.randint(7, now.year % 100)
-    if year == now.year % 100:
-        may_be_current_date = True
-    randomDate += year * 10000
-    if(may_be_current_date):
-        month = random.randint(1,now.month)
-    else:
-        month = random.randint(1,13)
-    randomDate += month * 100
-    if(may_be_current_date):
-        day = random.randint(1, now.day)
-    else:
-        if(month == 2):
-            if(abs(year - 16) % 4 == 0):
-                day = random.randint(1, 29)
-            else:
-                day = random.randint(1, 28)
-        else:
-            if(month < 8):
-                if(not month%2):
-                    day = random.randint(1, 31)
-                else:
-                    day = random.randint(1, 30)
-            else:
-                if(month%2):
-                    day = random.randint(1, 31)
-                else:
-                    day = random.randint(1, 30)
-    randomDate += day
-    print("random date: " + str(randomDate))
-    return randomDate
+        randomDate = ''.join(randomDate)
+        print(str(randomDate[2:]))
+        return randomDate[2:]
+
+    except ValueError:
+        print("Invalid date!")
+        return getValidDate()
 
 def getLink(date):
     return "https://apod.nasa.gov/apod/ap" + str(date) + ".html"
@@ -115,6 +79,9 @@ def downloadImage(url):
         pass
     return currentRandomWallpaper
     
+def getPlatform():
+    current_system = platform.system()
+    #print("Current system: ", current_system)
 
 def rollAWallpaper():
     date = getValidDate()
