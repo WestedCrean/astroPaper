@@ -23,17 +23,13 @@ def getValidDate():
     year = random.randint(2004, d.year)
     month = random.randint(1, 12)
     day = random.randint(1, 31)
-    randomDate = '{}-{}-{}'.format(year,month,day)
+    randomDate = datetime.date(year, month, day)
     try:
-        checkDate = lambda rdate : datetime.datetime.strptime(rdate, '%Y-%m-%d')
-        checkDate(randomDate)
+        #check
+        checkDate = lambda rdate : datetime.datetime.strptime(rdate, "%y%m%d")
         print("Valid date!")
-        randomDate = randomDate.split('-')
-        #here
-
-        randomDate = ''.join(randomDate)
-        print(str(randomDate[2:]))
-        return randomDate[2:]
+        randomDate = datetime.date.strftime(randomDate, "%y%m%d")
+        return randomDate
 
     except ValueError:
         print("Invalid date!")
@@ -102,7 +98,6 @@ def mainRoutine():
         wallpaper = downloadImage(url)
         downloadSuccess = True
         
-
 #def addToFavourites():
 '''
 pseudocode:
@@ -184,6 +179,7 @@ def clearOldWallpapers(dir, lastWallpaperName): #add global wallpaper save folde
 
 def main():
 
+    current_system = platform.system()
     path = "/Users/WestedCrean/Pictures/"
     wallpaper = ""
     mainRoutine()
