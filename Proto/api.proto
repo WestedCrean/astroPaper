@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package AstroPaper;
+
+service AstroPaper {
+    rpc getWallpaper (Empty) returns (GetResponse) {}
+    rpc setupWallpaper (SetupRequest) returns (SetupResponse) {}
+}
+//first request is just asking api to roll and download a wallpaper
+message Empty {
+    string empty = 1;
+}
+message GetResponse {
+    string file = 1;
+    //add string description = 2; + python implementation
+}
+message SetupRequest {
+    string file = 1;
+}
+message SetupResponse {
+    string message = 1;
+}

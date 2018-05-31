@@ -5,6 +5,7 @@
     "start": "electron ."
   },
   "dependencies": {
+    "grpc": "^1.12.2",
     "zerorpc": "fyears/zerorpc-node"
   },
   "devDependencies": {
