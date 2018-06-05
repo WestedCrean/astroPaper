@@ -19,21 +19,21 @@ import __main__
 import numpy as np
 
 def getValidDate():
+    now = datetime.datetime.now()
+    now = datetime.date(now.year, now.month, now.day)
+    year = random.randint(2004, now.year)
+    month = random.randint(1, 12)
+    day = random.randint(1, 31)
     try:
-        d = datetime.datetime.now()
-        year = random.randint(2004, d.year)
-        month = random.randint(1, 12)
-        day = random.randint(1, 31)
         randomDate = datetime.date(year, month, day)
-        #checkDate = lambda rdate : datetime.datetime.strptime(rdate, "%y%m%d")
-        #print("Valid date!")
-        #checkDate(randomDate)
-        randomDate = datetime.date.strftime(randomDate, "%y%m%d")
-        return randomDate
-
-    except ValueError:
-        print("Invalid date!")
-        return getValidDate()
+        if(randomDate > now):
+            year = year - 1
+            randomDate = datetime.date(year, month, day)
+    except ValueError :
+        day = day - 3
+        randomDate = datetime.date(year, month, day)
+    randomDate = datetime.date.strftime(randomDate, "%y%m%d")
+    return randomDate
 
 def getLink(date):
     return "https://apod.nasa.gov/apod/ap" + str(date) + ".html"
@@ -128,7 +128,7 @@ def wallpaperSetup(current_system, wallpaper):
             print("gsettings not working")
     return -1
 
-def main():
+def main():ńs
     current_system = getPlatform()
     wallpaper = newWallpaper()
     print(wallpaper)
