@@ -128,9 +128,7 @@ def wallpaperSetup(current_system, wallpaper, wallpaper_path):
 
 class Astropaper():
     def __init__(self):
-        #self.path = ''
         self.platform = getPlatform()
-        #self.wallpapers = []
     def setPath(self, path):
         self.path = path
     def newWallpaper(self):
