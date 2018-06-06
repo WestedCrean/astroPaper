@@ -6,13 +6,15 @@ Feel free to fork it, tweak it and send a pull request! I plan to move from astr
 
 ## ☑ TODO
 
-- [X] python logic
+- [X] python backend (finally is bulletproof)
 - [X] prototype frontend
 - [X] make Electron.js work
 - [X] add zerorpc
-- [ ] connect python/zerorpcserver with electron with frontend
+- [X] move from zerorpc to grpc (better support)
+- [ ] connect python with Electron frontend
 - [ ] add favourites button
-- [ ] make better frontend with p5.js
-- [ ] delete old wallpapers
-- [ ] choose the right wallpapers to set up
-- [ ] automatically run the script after a certain amount of time
+- [ ] actually I'm considering React frontend instead of pure Electron
+   .
+   .
+   .
+- [ ] release ?
