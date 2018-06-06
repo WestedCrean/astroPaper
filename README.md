@@ -14,7 +14,7 @@ Feel free to fork it, tweak it and send a pull request! I plan to move from astr
 - [ ] connect python with Electron frontend
 - [ ] add favourites button
 - [ ] actually I'm considering React frontend instead of pure Electron
-   .
-   .
-   .
+<br/>   .
+<br/>   .
+<br/>   .
 - [ ] release ?
