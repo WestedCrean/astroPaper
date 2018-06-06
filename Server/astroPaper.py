@@ -2,22 +2,17 @@
 # ------ NASA's Astronomy Picture of the Day ------
 # -------- Random wallpaper by Wiktor Flis --------
 #
+import os
+import sys
+import re
+import __main__
+
+import platform
 import datetime
 import random
-import platform
-import re
-import urllib.request
-import urllib.error
-import urllib.parse
-import tkinter as tk
-import struct
-import subprocess
-import os
-import shutil
-import __main__
-import numpy as np
+
 import requests
-import sys
+
 
 def getValidDate():
     now = datetime.datetime.now()
@@ -40,10 +35,9 @@ def getLink(date):
     return "https://apod.nasa.gov/apod/ap" + str(date) + ".html"
 
 def getImgLinkFromURL(url):
-    #print(url)
     try:
-        html_page = urllib.request.urlopen(url)
-        html_page = str(html_page.read())
+        html_page = requests.get(url)
+        html_page = html_page.text
         imglink = re.search(r"href=[\\'\"]?([^\'\" >]+)?(.jpg|.jpeg|.png)", html_page)
         if imglink:
             imglink = imglink.group(0)[6:]
@@ -103,12 +97,10 @@ def getPath(wallpaper):
     wallpaper_path = os.path.abspath(__file__)
     wallpaper_path = re.sub(__file__, '', wallpaper_path)
     wallpaper_path = str(wallpaper_path) + str(wallpaper)
-    #print("Current random wallpaper absolute path : " + wallpaper_path)
     return wallpaper_path
 
-def wallpaperSetup(current_system, wallpaper):
-    wallpaper_path = getPath(wallpaper)
-    #setting up the wallpaper, depending on a system
+
+def wallpaperSetup(current_system, wallpaper, wallpaper_path):
     if current_system == "Windows":
         try:
             import ctypes
@@ -125,7 +117,6 @@ def wallpaperSetup(current_system, wallpaper):
             return 0
         except:
             print("Appscript not installed.")
-        #macos set up
 
     if current_system == "Linux":
         try:
@@ -135,12 +126,27 @@ def wallpaperSetup(current_system, wallpaper):
             print("gsettings not working")
     return -1
 
+class Astropaper():
+    def __init__(self):
+        #self.path = ''
+        self.platform = getPlatform()
+        #self.wallpapers = []
+    def setPath(self, path):
+        self.path = path
+    def newWallpaper(self):
+        self.wallpaper = newWallpaper()
+        self.path = getPath(self.wallpaper)
+    def setup(self):
+        wallpaperSetup(self.platform,self.wallpaper,self.path)
+
+
 def main():
-    current_system = getPlatform()
-    wallpaper = newWallpaper()
-    #print(wallpaper)
-    wallpaperSetup(current_system, wallpaper)
-    #print(wallpaper)
+    astropaper = Astropaper()
+    
+    astropaper.newWallpaper()
+    print("" + str(astropaper.wallpaper))
+    astropaper.setup()
+    
 
 if __name__ == "__main__":
     main()
