@@ -15,8 +15,9 @@ import subprocess
 import os
 import shutil
 import __main__
-#import cv2
 import numpy as np
+import requests
+import sys
 
 def getValidDate():
     now = datetime.datetime.now()
@@ -39,41 +40,48 @@ def getLink(date):
     return "https://apod.nasa.gov/apod/ap" + str(date) + ".html"
 
 def getImgLinkFromURL(url):
-    print(url)
+    #print(url)
     try:
-        html_page = urllib.request.urlopen(url)#sometime this line throws urllib2.HTTPError: HTTP Error 404: Not Found
-        success = True
+        html_page = urllib.request.urlopen(url)
+        html_page = str(html_page.read())
+        imglink = re.search(r"href=[\\'\"]?([^\'\" >]+)?(.jpg|.jpeg|.png)", html_page)
+        if imglink:
+            imglink = imglink.group(0)[6:]
+            #url += imglink
+            return "https://apod.nasa.gov/apod/" + imglink
+        else:
+            return -1  
     except:
-        print("404 getImgLinkFromURL()")
-        html_page = getImgLinkFromURL(getLink(getValidDate))
-    html_page = str(html_page.read())
-    
-    imglink = re.search(r"href=[\\'\"]?([^\'\" >]+)?(.jpg|.jpeg|.png)", html_page)
-    if imglink:
-        imglink = imglink.group(0)[6:]
-        #url += imglink
-        return "https://apod.nasa.gov/apod/" + imglink
-    else:
-        return -1   
+        return -1  
 
 def getimgLink():
-    while True:
-        try:
-            imgURL = getImgLinkFromURL(getLink(getValidDate()))
-            break
-        except Exception as e:
-            print(e)
-    return imgURL
+    photofound = False
+    while(not photofound):
+        link1 = getLink(getValidDate())
+        link2 = getImgLinkFromURL(link1)
+        if (link2 != -1):
+            photofound = True
+    return link2
 
 def downloadImage(url):
     global currentRandomWallpaper
     file_name = url.split('/')[-1]
-    currentRandomWallpaper = file_name
-    #print("Downloading " + file_name)
+    file_name
+    r = requests.get(url, stream=True)
+    size = r.headers.get('Content-Length')
+    size = int(size)
     os.path.abspath(__file__)
-    wallpaper_path = os.path.abspath(__file__)
-    wallpaper_path = re.sub(__file__, '', wallpaper_path)
-    urllib.request.urlretrieve(url, wallpaper_path + currentRandomWallpaper)
+    path = os.path.abspath(__file__)
+    path = re.sub(__file__, '', path)
+
+
+    with open(path + '/' + file_name, 'wb') as file:
+        download = 0
+        for chunk in r.iter_content(256):
+            download += len(chunk)
+            file.write(chunk)
+            sys.stdout.write("Done: %d / %d bytes\r" % (download, size))
+            sys.stdout.flush()
     return file_name
 
 def getPlatform():
@@ -88,7 +96,6 @@ def newWallpaper():
         except Exception as e:
             print("Exception:")
             print(e)
-
     return wallpaper
 
 def getPath(wallpaper):
@@ -128,12 +135,12 @@ def wallpaperSetup(current_system, wallpaper):
             print("gsettings not working")
     return -1
 
-def main():ńs
+def main():
     current_system = getPlatform()
     wallpaper = newWallpaper()
-    print(wallpaper)
+    #print(wallpaper)
     wallpaperSetup(current_system, wallpaper)
-    print("Wallpaper set up!")
+    #print(wallpaper)
 
 if __name__ == "__main__":
     main()
