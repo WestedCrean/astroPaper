@@ -3,22 +3,24 @@ import time
 
 import grpc
 
-import api_pb2
-import api_pb2_grpc
+import astropaperservice_pb2
+import astropaperservice_pb2_grpc
 
-import astroPaper
+import astropaper as ap
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
-class WallpaperServicer(api_pb2_grpc.AstroPaperServicer):
-    wallpaper = ""
+class WallpaperServicer(astropaperservice_pb2_grpc.AstroPaperServiceServicer):
+    def __init__():
+        self.platform = ap.g
+
     def getWallpaper(self, request, context):
         print("inside getWallpaper() function")
-        self.wallpaper = astroPaper.newWallpaper()
-        return api_pb2.GetResponse(file='%s' % self.wallpaper)
+        self.wallpaper = ap.newWallpaper()
+        return astropaperservice_pb2._APIREPLY(message='Wallpaper: %d' % self.wallpaper)
     def setupWallpaper(self, request, context):
         print("inside setupWallpaper() function")
-        astroPaper.wallpaperSetup(astroPaper.getPlatform(), self.wallpaper)
+        ap.wallpaperSetup(self.platform, self.wallpaper)
         return api_pb2.SetupResponse(message="Wallpaper %s is set!" % self.wallpaper)
 
 def serve():
