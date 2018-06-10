@@ -11,21 +11,22 @@ import astropaper as ap
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
 class WallpaperServicer(astropaperservice_pb2_grpc.AstroPaperServiceServicer):
-    def __init__():
-        self.platform = ap.g
+    def __init__(self):
+        self.platform = ap.getPlatform()
+        self.wallpaper = ''
 
-    def getWallpaper(self, request, context):
-        print("inside getWallpaper() function")
-        self.wallpaper = ap.newWallpaper()
-        return astropaperservice_pb2._APIREPLY(message='Wallpaper: %d' % self.wallpaper)
-    def setupWallpaper(self, request, context):
-        print("inside setupWallpaper() function")
+    def GetNewWallpaper(self, request, context):
+        print("inside GetNewWallpaper() function")
+        ap.downloadImage("https://apod.nasa.gov/apod/image/1707/MOSAIC_IC1396_HaSHO_blanco.jpg")
+        return astropaperservice_pb2.APIReply("Wallpaper: downloaded")
+    def SetupWallpaper(self, request, context):
+        print("inside SetupWallpaper() function")
         ap.wallpaperSetup(self.platform, self.wallpaper)
-        return api_pb2.SetupResponse(message="Wallpaper %s is set!" % self.wallpaper)
+        return astropaperservice_pb2.APIReply(reply="Wallpaper %s is set!" % self.wallpaper)
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    api_pb2_grpc.add_AstroPaperServicer_to_server(WallpaperServicer(), server)
+    astropaperservice_pb2_grpc.add_AstroPaperServiceServicer_to_server(WallpaperServicer(), server)
     server.add_insecure_port('[::]:50050')
     server.start()
     print("Server started, entering loop")

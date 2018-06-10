@@ -58,7 +58,6 @@ def getimgLink():
     return link2
 
 def downloadImage(url):
-    global currentRandomWallpaper
     file_name = url.split('/')[-1]
     file_name
     r = requests.get(url, stream=True)
@@ -82,10 +81,12 @@ def getPlatform():
     return platform.system()
 
 def newWallpaper():
-    imglink = getimgLink()
-    while True:
+    while(True):
+        imglink = getimgLink()
         try:
+            print("Downloading wallpaper")
             wallpaper = downloadImage(imglink)
+            print("Downloaded")
             break
         except Exception as e:
             print("Exception:")
@@ -137,10 +138,8 @@ class Astropaper():
     def setup(self):
         wallpaperSetup(self.platform,self.wallpaper,self.path)
 
-
 def main():
     astropaper = Astropaper()
-    
     astropaper.newWallpaper()
     print("" + str(astropaper.wallpaper))
     astropaper.setup()
