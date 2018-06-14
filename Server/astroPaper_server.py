@@ -14,14 +14,17 @@ class WallpaperServicer(astropaperservice_pb2_grpc.AstroPaperServiceServicer):
     def __init__(self):
         self.platform = ap.getPlatform()
         self.wallpaper = ''
+        self.path = ''
 
     def GetNewWallpaper(self, request, context):
         print("inside GetNewWallpaper() function")
-        ap.downloadImage("https://apod.nasa.gov/apod/image/1707/MOSAIC_IC1396_HaSHO_blanco.jpg")
-        return astropaperservice_pb2.APIReply("Wallpaper: downloaded")
+        self.wallpaper = ap.downloadImage("https://apod.nasa.gov/apod/image/1707/MOSAIC_IC1396_HaSHO_blanco.jpg")
+        self.path = ap.getPath(self.wallpaper)
+        print("Path : " + self.path)
+        return astropaperservice_pb2.APIReply(reply="%s" % self.wallpaper)
     def SetupWallpaper(self, request, context):
         print("inside SetupWallpaper() function")
-        ap.wallpaperSetup(self.platform, self.wallpaper)
+        ap.wallpaperSetup(self.platform, self.wallpaper, self.path)
         return astropaperservice_pb2.APIReply(reply="Wallpaper %s is set!" % self.wallpaper)
 
 def serve():

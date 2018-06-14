@@ -81,16 +81,17 @@ def getPlatform():
     return platform.system()
 
 def newWallpaper():
+    wallpaper = ''
     while(True):
-        imglink = getimgLink()
         try:
-            print("Downloading wallpaper")
-            wallpaper = downloadImage(imglink)
-            print("Downloaded")
+            imglink = getimgLink()
             break
         except Exception as e:
             print("Exception:")
-            print(e)
+
+        print("Downloading wallpaper")
+        wallpaper = downloadImage(imglink)
+        print("Downloaded")
     return wallpaper
 
 def getPath(wallpaper):

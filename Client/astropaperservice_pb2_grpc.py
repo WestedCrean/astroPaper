@@ -16,12 +16,12 @@ class AstroPaperServiceStub(object):
     """
     self.GetNewWallpaper = channel.unary_unary(
         '/astropaper.AstroPaperService/GetNewWallpaper',
-        request_serializer=astropaperservice__pb2.APIRequest.SerializeToString,
+        request_serializer=astropaperservice__pb2.WallpaperRequest.SerializeToString,
         response_deserializer=astropaperservice__pb2.APIReply.FromString,
         )
     self.SetupWallpaper = channel.unary_unary(
         '/astropaper.AstroPaperService/SetupWallpaper',
-        request_serializer=astropaperservice__pb2.APIRequest.SerializeToString,
+        request_serializer=astropaperservice__pb2.SetupRequest.SerializeToString,
         response_deserializer=astropaperservice__pb2.APIReply.FromString,
         )
 
@@ -49,12 +49,12 @@ def add_AstroPaperServiceServicer_to_server(servicer, server):
   rpc_method_handlers = {
       'GetNewWallpaper': grpc.unary_unary_rpc_method_handler(
           servicer.GetNewWallpaper,
-          request_deserializer=astropaperservice__pb2.APIRequest.FromString,
+          request_deserializer=astropaperservice__pb2.WallpaperRequest.FromString,
           response_serializer=astropaperservice__pb2.APIReply.SerializeToString,
       ),
       'SetupWallpaper': grpc.unary_unary_rpc_method_handler(
           servicer.SetupWallpaper,
-          request_deserializer=astropaperservice__pb2.APIRequest.FromString,
+          request_deserializer=astropaperservice__pb2.SetupRequest.FromString,
           response_serializer=astropaperservice__pb2.APIReply.SerializeToString,
       ),
   }

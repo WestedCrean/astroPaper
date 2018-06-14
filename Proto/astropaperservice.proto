@@ -4,12 +4,16 @@ package astropaper;
 
 // The api service definition.
 service AstroPaperService {
-  rpc GetNewWallpaper (APIRequest) returns (APIReply) {}
-  rpc SetupWallpaper (APIRequest) returns (APIReply) {}
+  rpc GetNewWallpaper (WallpaperRequest) returns (APIReply) {}
+  rpc SetupWallpaper (SetupRequest) returns (APIReply) {}
 }
 
-message APIRequest {
-  string name = 1;
+message WallpaperRequest {
+  int32 quantity = 1;
+}
+
+message SetupRequest {
+  string wallpaper = 1;
 }
 
 message APIReply {
