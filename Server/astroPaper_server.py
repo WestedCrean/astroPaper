@@ -21,11 +21,12 @@ class WallpaperServicer(astropaperservice_pb2_grpc.AstroPaperServiceServicer):
         self.wallpaper = ap.downloadImage("https://apod.nasa.gov/apod/image/1707/MOSAIC_IC1396_HaSHO_blanco.jpg")
         self.path = ap.getPath(self.wallpaper)
         print("Path : " + self.path)
-        return astropaperservice_pb2.APIReply(reply="%s" % self.wallpaper)
+        print("Quantity: " + request.quantity)
+        return astropaperservice_pb2.APIReply(reply="Quantity: {}".format(request.quantity))
     def SetupWallpaper(self, request, context):
         print("inside SetupWallpaper() function")
-        ap.wallpaperSetup(self.platform, self.wallpaper, self.path)
-        return astropaperservice_pb2.APIReply(reply="Wallpaper %s is set!" % self.wallpaper)
+        ap.wallpaperSetup(self.platform, request.wallpaper, self.path)
+        return astropaperservice_pb2.APIReply(reply="Wallpaper %s is set!" % request.wallpaper)
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))

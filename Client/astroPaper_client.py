@@ -11,7 +11,7 @@ def run():
     print("Creating stub")
     stub = astropaperservice_pb2_grpc.AstroPaperServiceStub(channel)
     print("Stub created, making GET request")
-    wallpaper = stub.GetNewWallpaper(astropaperservice_pb2.APIRequest(name='you'))
+    wallpaper = stub.GetNewWallpaper(astropaperservice_pb2.APIRequest(quantity=1))
     print("getWallpaper() : " + str(wallpaper))
     setup = stub.SetupWallpaper(astropaperservice_pb2.APIRequest(name=str(wallpaper)))
 if __name__ == '__main__':
