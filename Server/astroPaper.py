@@ -118,7 +118,7 @@ def wallpaperSetup(current_system, wallpaper, wallpaper_path):
             os.system(setWallpaperCommand)
             return 0
         except:
-            print("Appscript not installed.")
+            print("Appscript may be not installed.")
 
     if current_system == "Linux":
         try:
