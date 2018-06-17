@@ -57,16 +57,16 @@ def getimgLink():
             photofound = True
     return link2
 
-def downloadImage(url):
+def downloadImage(url, destination_path):
     file_name = url.split('/')[-1]
     file_name
     r = requests.get(url, stream=True)
     size = r.headers.get('Content-Length')
     size = int(size)
-    os.path.abspath(__file__)
-    path = os.path.abspath(__file__)
-    path = re.sub(__file__, '', path)
-
+    #os.path.abspath(__file__)
+    #path = os.path.abspath(__file__)
+    #path = re.sub(__file__, '', path)
+    path = destination_path
 
     with open(path + '/' + file_name, 'wb') as file:
         download = 0
@@ -80,8 +80,7 @@ def downloadImage(url):
 def getPlatform():
     return platform.system()
 
-def newWallpaper():
-    wallpaper = ''
+def newWallpaper(path):
     while(True):
         try:
             imglink = getimgLink()
@@ -90,15 +89,16 @@ def newWallpaper():
             print("Exception: {}".format(str(e)))
 
     print("Downloading wallpaper")
-    wallpaper = downloadImage(imglink)
+    wallpaper = downloadImage(imglink, path)
     print("Downloaded")
     return wallpaper
 
-def getPath(wallpaper):
+def getPath():
     #TODO make folder for photographs in another place
-    wallpaper_path = os.path.abspath(__file__)
-    wallpaper_path = re.sub(__file__, '', wallpaper_path)
-    wallpaper_path = str(wallpaper_path) + str(wallpaper)
+    #wallpaper_path = os.path.abspath(__file__)
+    #wallpaper_path = re.sub(__file__, '', wallpaper_path)
+    #wallpaper_path = str(wallpaper_path) + str(wallpaper)
+    wallpaper_path = '/Users/WestedCrean/Pictures/'
     return wallpaper_path
 
 
@@ -114,12 +114,13 @@ def wallpaperSetup(current_system, wallpaper, wallpaper_path):
 
     if current_system == "Darwin":
         try:
+            wallpaper_path += wallpaper
             setWallpaperCommand = "osascript -e 'tell application \"Finder\" to set desktop picture to POSIX file \"" + wallpaper_path + "\"'"
-            
-            #os.system(setWallpaperCommand)
+            print(setWallpaperCommand)
+            os.system(setWallpaperCommand)
 
             # subprocess
-            subprocess.call(setWallpaperCommand, shell=True)
+            #subprocess.call(setWallpaperCommand, shell=True)
 
             return 0
         except:
@@ -136,11 +137,11 @@ def wallpaperSetup(current_system, wallpaper, wallpaper_path):
 class Astropaper():
     def __init__(self):
         self.platform = getPlatform()
+        self.path = getPath()
     def setPath(self, path):
         self.path = path
     def getNewWallpaper(self):
-        self.wallpaper = newWallpaper()
-        self.path = getPath(self.wallpaper)
+        self.wallpaper = newWallpaper(self.path)
     def setup(self):
         wallpaperSetup(self.platform,self.wallpaper,self.path)
 

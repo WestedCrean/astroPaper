@@ -4,12 +4,12 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+requests = "*"
 grpcio = "*"
 grpcio-tools = "*"
-requests = "*"
-appscript = "*"
 
 [dev-packages]
+grpcio-tools = "*"
 
 [requires]
 python_version = "3.6"
