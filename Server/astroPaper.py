@@ -10,7 +10,7 @@ import __main__
 import platform
 import datetime
 import random
-
+import subprocess
 import requests
 
 
@@ -87,11 +87,11 @@ def newWallpaper():
             imglink = getimgLink()
             break
         except Exception as e:
-            print("Exception:")
+            print("Exception: {}".format(str(e)))
 
-        print("Downloading wallpaper")
-        wallpaper = downloadImage(imglink)
-        print("Downloaded")
+    print("Downloading wallpaper")
+    wallpaper = downloadImage(imglink)
+    print("Downloaded")
     return wallpaper
 
 def getPath(wallpaper):
@@ -115,7 +115,12 @@ def wallpaperSetup(current_system, wallpaper, wallpaper_path):
     if current_system == "Darwin":
         try:
             setWallpaperCommand = "osascript -e 'tell application \"Finder\" to set desktop picture to POSIX file \"" + wallpaper_path + "\"'"
-            os.system(setWallpaperCommand)
+            
+            #os.system(setWallpaperCommand)
+
+            # subprocess
+            subprocess.call(setWallpaperCommand, shell=True)
+
             return 0
         except:
             print("Appscript may be not installed.")
@@ -133,7 +138,7 @@ class Astropaper():
         self.platform = getPlatform()
     def setPath(self, path):
         self.path = path
-    def newWallpaper(self):
+    def getNewWallpaper(self):
         self.wallpaper = newWallpaper()
         self.path = getPath(self.wallpaper)
     def setup(self):
@@ -141,7 +146,7 @@ class Astropaper():
 
 def main():
     astropaper = Astropaper()
-    astropaper.newWallpaper()
+    astropaper.getNewWallpaper()
     print("" + str(astropaper.wallpaper))
     astropaper.setup()
     
