@@ -9,8 +9,10 @@
     "async": "^1.5.2",
     "google-protobuf": "^3.0.0",
     "grpc": "^1.12.3",
+    "grpc-tools": "^1.6.6",
     "lodash": "^4.6.1",
-    "minimist": "^1.2.0"
+    "minimist": "^1.2.0",
+    "protobufjs": "^6.8.6"
   },
   "devDependencies": {
     "electron": "^1.8.4",

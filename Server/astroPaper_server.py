@@ -3,14 +3,14 @@ import time
 
 import grpc
 
-import astropaperservice_pb2
-import astropaperservice_pb2_grpc
+import apservice_pb2_grpc
+import apservice_pb2
 
 import astropaper as ap
 
 _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 
-class WallpaperServicer(astropaperservice_pb2_grpc.AstroPaperServiceServicer):
+class WallpaperServicer(apservice_pb2_grpc.AstropaperServicer):
     def __init__(self):
         self.platform = ap.getPlatform()
         self.path = ap.getPath()
@@ -19,15 +19,16 @@ class WallpaperServicer(astropaperservice_pb2_grpc.AstroPaperServiceServicer):
         self.wallpaper = ap.newWallpaper(self.path)
         print("Path : " + self.path)
         print("Quantity: " + str(request.quantity))
-        return astropaperservice_pb2.APIReply(reply=str(self.wallpaper))
+        return apservice_pb2.APIReply(reply=str(self.wallpaper))
     def SetupWallpaper(self, request, context):
         print("inside SetupWallpaper() function")
+        #print("The request is: " + str(request))
         ap.wallpaperSetup(self.platform, request.wallpaper, self.path)
-        return astropaperservice_pb2.APIReply(reply="Wallpaper %s is set!" % request.wallpaper)
+        return apservice_pb2.APIReply(reply="Wallpaper %s is set!" % request.wallpaper)
 
 def serve():
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    astropaperservice_pb2_grpc.add_AstroPaperServiceServicer_to_server(WallpaperServicer(), server)
+    apservice_pb2_grpc.add_AstropaperServicer_to_server(WallpaperServicer(), server)
     server.add_insecure_port('[::]:50050')
     server.start()
     print("Server started, entering loop")

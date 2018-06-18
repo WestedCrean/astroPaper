@@ -1,17 +1,32 @@
-var PROTO_PATH = __dirname + '/../Proto/astropaperservice.proto';
+//var PROTO_PATH = __dirname + '/../Proto/apservice.proto';
+var messages = require('./apservice_pb');
+var services = require('./apservice_grpc_pb');
 
 var grpc = require('grpc');
 
-var  astropaper_proto = grpc.load(PROTO_PATH).astropaperservice;
-console.log(astropaper_proto);
-
 function main() {
-  console.log("Client is running")
-  var client = new astropaper_proto.AstroPaperService('localhost:50050',
+  console.log("Client is running");
+  var client = new services.AstropaperClient('localhost:50050',
                                        grpc.credentials.createInsecure());
-  client.GetNewWallpaper({quantity: 1}, function(err, response) {
-    var wallpaperName = response.reply.slice(8,response.reply.length - 2);
-    console.log('Wallpaper: ', wallpaperName);
+  var request = new messages.WallpaperRequest();
+  
+  var quantity;
+  if (process.argv.length >= 3) {
+    quantity = process.argv[2];
+  } else {
+    quantity = 1;
+  }
+  request.setQuantity(quantity);
+  var wallpaper = client.getNewWallpaper(request, function(err, response) {
+    console.log('Wallpaper:', response.array[0]);
+    return response.array[0];
+  });
+
+  console.log('Setting up wallpaper ', wallpaper);
+  var setup = new messages.SetupRequest();
+  setup.setWallpaper(wallpaper);
+  client.setupWallpaper(setup, function(err, response) {
+    console.log('', wallpaper);
   });
 }
 
