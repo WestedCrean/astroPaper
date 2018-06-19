@@ -21,6 +21,11 @@ function main() {
     console.log('Wallpaper:', response.array[0]);
     var wallpaper = response.array[0];
     // chained get + setup
+    // TODO: make it event driven
+    // 
+    // ex: 6 calls for new wallpapers
+    // on each done => display in app
+    // on event 'checked' and 'setup' call setup
     var setup = new messages.SetupRequest();
     setup.setWallpaper(wallpaper);
     client.setupWallpaper(setup, function(err, response) {
