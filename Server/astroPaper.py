@@ -98,7 +98,7 @@ def getPath(platform):
 
         pass
     else:
-        wallpaper_path = os.path.expanduser('~/Pictures/') +  'Astropaper'
+        wallpaper_path = os.path.expanduser('~/Pictures/') +  'Astropaper/'
         if not os.path.exists(wallpaper_path):
             os.makedirs(wallpaper_path)        
 

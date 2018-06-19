@@ -19,6 +19,13 @@ function main() {
   request.setQuantity(quantity);
   client.getNewWallpaper(request, function(err, response) {
     console.log('Wallpaper:', response.array[0]);
+    var wallpaper = response.array[0];
+    // chained get + setup
+    var setup = new messages.SetupRequest();
+    setup.setWallpaper(wallpaper);
+    client.setupWallpaper(setup, function(err, response) {
+      console.log('', wallpaper);
+    });
   });
 }
 
