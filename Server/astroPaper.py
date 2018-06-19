@@ -93,12 +93,14 @@ def newWallpaper(path):
     print("Downloaded")
     return wallpaper
 
-def getPath():
-    #TODO make folder for photographs in another place
-    #wallpaper_path = os.path.abspath(__file__)
-    #wallpaper_path = re.sub(__file__, '', wallpaper_path)
-    #wallpaper_path = str(wallpaper_path) + str(wallpaper)
-    wallpaper_path = '/Users/WestedCrean/Pictures/'
+def getPath(platform):
+    if platform == 'Windows':
+        pass
+    else:
+        wallpaper_path = '/Users/WestedCrean/Pictures/Astropaper'
+        if not os.path.exists(wallpaper_path):
+            os.makedirs(wallpaper_path)        
+
     return wallpaper_path
 
 
@@ -137,7 +139,7 @@ def wallpaperSetup(current_system, wallpaper, wallpaper_path):
 class Astropaper():
     def __init__(self):
         self.platform = getPlatform()
-        self.path = getPath()
+        self.path = getPath(self.platform)
     def setPath(self, path):
         self.path = path
     def getNewWallpaper(self):

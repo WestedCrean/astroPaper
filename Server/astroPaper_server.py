@@ -13,15 +13,14 @@ _ONE_DAY_IN_SECONDS = 60 * 60 * 24
 class WallpaperServicer(apservice_pb2_grpc.AstropaperServicer):
     def __init__(self):
         self.platform = ap.getPlatform()
-        self.path = ap.getPath()
+        self.path = ap.getPath(self.platform)
     def GetNewWallpaper(self, request, context):
-        print("inside GetNewWallpaper() function")
         self.wallpaper = ap.newWallpaper(self.path)
         print("Path : " + self.path)
         print("Quantity: " + str(request.quantity))
         return apservice_pb2.APIReply(reply=str(self.wallpaper))
     def SetupWallpaper(self, request, context):
-        print("inside SetupWallpaper() function")
+        print("Setup request: " + request.wallpaper)
         #print("The request is: " + str(request))
         ap.wallpaperSetup(self.platform, request.wallpaper, self.path)
         return apservice_pb2.APIReply(reply="Wallpaper %s is set!" % request.wallpaper)

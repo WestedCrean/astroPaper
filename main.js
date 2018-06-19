@@ -5,6 +5,7 @@ const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 
+
 let mainWindow = null
 const createWindow = () => {
   mainWindow = new BrowserWindow({width: 1000, height: 600});
@@ -28,7 +29,9 @@ app.on('activate', () => {
   }
 });
 
-// Python
+
+
+// Python Backend
 
 let pyProc = null
 let pyPort = null
@@ -40,7 +43,7 @@ const selectPort = () => {
 
 const createPyProc = () => {
   let port = '' + selectPort()
-  let script = path.join(__dirname, 'astroPaper', 'api.py')
+  let script = path.join(__dirname, 'Server', 'astropaper_server.py')
   pyProc = require('child_process').spawn('python', [script, port])
   if (pyProc != null) {
     console.log('child process success')

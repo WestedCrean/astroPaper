@@ -1,7 +1,6 @@
-//var PROTO_PATH = __dirname + '/../Proto/apservice.proto';
 var messages = require('./apservice_pb');
 var services = require('./apservice_grpc_pb');
-
+var EventEmitter = require('events').EventEmitter;
 var grpc = require('grpc');
 
 function main() {
@@ -16,17 +15,10 @@ function main() {
   } else {
     quantity = 1;
   }
-  request.setQuantity(quantity);
-  var wallpaper = client.getNewWallpaper(request, function(err, response) {
-    console.log('Wallpaper:', response.array[0]);
-    return response.array[0];
-  });
 
-  console.log('Setting up wallpaper ', wallpaper);
-  var setup = new messages.SetupRequest();
-  setup.setWallpaper(wallpaper);
-  client.setupWallpaper(setup, function(err, response) {
-    console.log('', wallpaper);
+  request.setQuantity(quantity);
+  client.getNewWallpaper(request, function(err, response) {
+    console.log('Wallpaper:', response.array[0]);
   });
 }
 

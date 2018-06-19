@@ -1,14 +1,13 @@
 // renderer.js
 
-const zerorpc = require("zerorpc");
-let client = new zerorpc.Client();
-client.connect("tcp://127.0.0.1:4242");
+// grpc
+const messages = require('./apservice_pb');
+const services = require('./apservice_grpc_pb');
+const grpc = require('grpc');
 
-var wow = () => {
-  console.log("Listening for clicks");
-};
+var client = new services.AstropaperClient('localhost:50050', grpc.credentials.createInsecure());
+var request = new messages.WallpaperRequest();
 
-wow();
 document.getElementById("roll").addEventListener("click", () => {
   console.log("roll clicked");
   client.invoke("roll", function(error, res, more) {
