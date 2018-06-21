@@ -6,6 +6,11 @@ const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 
+var messages = require('./Client/apservice_pb');
+var services = require('./Client/apservice_grpc_pb');
+var EventEmitter = require('events').EventEmitter;
+const grpc = require('grpc');
+
 // settting up the app
 
 let mainWindow = null
@@ -31,30 +36,9 @@ app.on('activate', () => {
   }
 });
 
-// communication with renderer.js
-/*
-ipcMain.on('asynchronous-message', (event, arg) => {
-  console.log(arg) // prints "ping"
-  event.sender.send('asynchronous-reply', 'Main.js : ' + arg)
-});
-
-ipcMain.on('synchronous-message', (event, arg) => {
-  console.log(arg) // prints "ping"
-  event.returnValue = 'Main.js : ' + arg
-});*/
-
-ipcMain.on('asynchronous-message', (event, arg) => {
-    console.log(arg) // prints "ping"
-    event.sender.send('asynchronous-reply', 'main.js : asynchronous reply : ')
-  })
-  
-  ipcMain.on('synchronous-message', (event, arg) => {
-    console.log(arg) // prints "ping"
-    event.returnValue = 'main.js : synchronous reply : pong'
-  })
-
-
-
+// grpc connection
+let client = new services.AstropaperClient('localhost:50050', grpc.credentials.createInsecure());
+let request = new messages.WallpaperRequest();
 // Python Backend
 
 let pyProc = null
@@ -79,6 +63,31 @@ const exitPyProc = () => {
   pyProc = null
   pyPort = null
 }
+
+// communication with renderer.js
+
+ipcMain.on('asynchronous-message', (event, arg) => {
+  // setup
+  console.log(arg)
+  if(arg == 'roll clicked'){
+    request.setQuantity(1);
+    client.getNewWallpaper(request, function(err, response) {
+      this.w = response.array[0]
+    console.log('Wallpaper:', this.w)
+    });
+    event.sender.send('asynchronous-reply', 'main.js : asynchronous reply roll ')
+  }else{
+    event.sender.send('asynchronous-reply', 'main.js : asynchronous reply setup ')
+  }
+})
+
+ipcMain.on('synchronous-message', (event, arg) => {
+  // roll
+  //let setup = new messages.SetupRequest();
+  console.log(arg)
+  event.returnValue = arg; //'main.js : setup'
+})
+
 
 
 app.on('ready', createPyProc)

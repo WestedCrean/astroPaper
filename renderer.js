@@ -4,13 +4,13 @@
 const {ipcRenderer} = require('electron')
 
 document.getElementById("roll").addEventListener("click", () => {
-  console.log(ipcRenderer.sendSync('synchronous-message','renderer.js : roll clicked'))
+  ipcRenderer.send('asynchronous-message', 'roll clicked')
 });
 
 document.getElementById('setup').addEventListener('click', () => {
-  ipcRenderer.send('asynchronous-message', 'renderer.js : setup clicked')
+  ipcRenderer.send('asynchronous-message', 'setup clicked')
 });
 
 ipcRenderer.on('asynchronous-reply', (event, arg) => {
-  console.log(arg) // prints "pong"
+  console.log(arg) 
 });

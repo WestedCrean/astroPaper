@@ -12,6 +12,7 @@ import datetime
 import random
 import subprocess
 import requests
+from PIL import Image
 
 
 def getValidDate():
@@ -59,23 +60,39 @@ def getimgLink():
 
 def downloadImage(url, destination_path):
     file_name = url.split('/')[-1]
-    file_name
     r = requests.get(url, stream=True)
     size = r.headers.get('Content-Length')
     size = int(size)
-    #os.path.abspath(__file__)
-    #path = os.path.abspath(__file__)
-    #path = re.sub(__file__, '', path)
-    path = destination_path
+    filepath = destination_path + '/' + file_name
 
-    with open(path + '/' + file_name, 'wb') as file:
+    with open(filepath, 'wb') as file:
         download = 0
         for chunk in r.iter_content(256):
             download += len(chunk)
             file.write(chunk)
             sys.stdout.write("Done: %d / %d bytes\r" % (download, size))
             sys.stdout.flush()
+
     return file_name
+
+def createPreview(file):
+    thumbnail_path = '../Previews/'
+    size = (233, 133)
+    outfile = file.split('/')[-1]
+    outfile = os.path.join(thumbnail_path, outfile)
+    outfile = outfile + ".mini.jpg"
+    if file != outfile:
+        try:
+            imsize = os.path.getsize(file)
+            print('Creating preview - Compressing image of size '+ str(imsize))
+            im = Image.open(file)
+            im.resize(size)
+            im.save(outfile, "JPEG", optimize=True,quality=20)
+            outsize = os.path.getsize(outfile)
+            deltasize = ((imsize - outsize)/imsize)*100
+            print("Output file size is {} , delta size (in %): {}".format(str(outsize), str(deltasize)))
+        except IOError:
+            print("cannot create thumbnail for", file)
 
 def getPlatform():
     return platform.system()

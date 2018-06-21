@@ -16,6 +16,7 @@ class WallpaperServicer(apservice_pb2_grpc.AstropaperServicer):
         self.path = ap.getPath(self.platform)
     def GetNewWallpaper(self, request, context):
         self.wallpaper = ap.newWallpaper(self.path)
+        ap.createPreview(self.path + '/' + self.wallpaper)
         print("Path : " + self.path)
         print("Quantity: " + str(request.quantity))
         return apservice_pb2.APIReply(reply=str(self.wallpaper))
