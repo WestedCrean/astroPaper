@@ -1,10 +1,12 @@
 // main.js
 
 const electron = require('electron')
+const {ipcMain} = require('electron')
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 const path = require('path')
 
+// settting up the app
 
 let mainWindow = null
 const createWindow = () => {
@@ -28,6 +30,28 @@ app.on('activate', () => {
     createWindow()
   }
 });
+
+// communication with renderer.js
+/*
+ipcMain.on('asynchronous-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+  event.sender.send('asynchronous-reply', 'Main.js : ' + arg)
+});
+
+ipcMain.on('synchronous-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+  event.returnValue = 'Main.js : ' + arg
+});*/
+
+ipcMain.on('asynchronous-message', (event, arg) => {
+    console.log(arg) // prints "ping"
+    event.sender.send('asynchronous-reply', 'main.js : asynchronous reply : ')
+  })
+  
+  ipcMain.on('synchronous-message', (event, arg) => {
+    console.log(arg) // prints "ping"
+    event.returnValue = 'main.js : synchronous reply : pong'
+  })
 
 
 

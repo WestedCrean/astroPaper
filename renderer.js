@@ -1,39 +1,16 @@
 // renderer.js
 
-// grpc
-const messages = require('./apservice_pb');
-const services = require('./apservice_grpc_pb');
-const grpc = require('grpc');
-
-var client = new services.AstropaperClient('localhost:50050', grpc.credentials.createInsecure());
-var request = new messages.WallpaperRequest();
+//communication with main.js
+const {ipcRenderer} = require('electron')
 
 document.getElementById("roll").addEventListener("click", () => {
-  console.log("roll clicked");
-  client.invoke("roll", function(error, res, more) {
-    if(error) {
-        console.error(error);
-    } else {
-        console.log("UPDATE:", res);
-    }
-
-    if(!more) {
-        console.log("Done.");
-    }
-  })
+  console.log(ipcRenderer.sendSync('synchronous-message','renderer.js : roll clicked'))
 });
 
 document.getElementById('setup').addEventListener('click', () => {
-  console.log("setup clicked");
-  client.invoke("setup", function(error, res, more) {
-    if(error) {
-        console.error(error);
-    } else {
-        console.log("UPDATE:", res);
-    }
+  ipcRenderer.send('asynchronous-message', 'renderer.js : setup clicked')
+});
 
-    if(!more) {
-        console.log("Done.");
-    }
-  })
+ipcRenderer.on('asynchronous-reply', (event, arg) => {
+  console.log(arg) // prints "pong"
 });
