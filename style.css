@@ -8,21 +8,24 @@ body {
 
 .preview {
   font-family: 'Segoe UI', Helvetica, Geneva, Verdana, sans-serif;
-  line-height: 200px;
   display: block;
-  height: 270px;
-  width: 480px;
-  margin: 30px auto;
   background-color: #e3e3e3;
   text-align: center;
-  
 }
+.previews {
+  display: grid;
+  width: 700px;
+  height: 400px;
+  margin: 0px auto;
+}
+
 
 .description {
   font-family: 'Segoe UI', Helvetica, Geneva, Verdana, sans-serif;
   color: #555555;
   display: block;
-  margin: 20px auto;
+  margin: 0 auto;
+  margin-top: 20px;
   text-align: center;
 }
 
@@ -32,9 +35,10 @@ button {
   cursor: pointer;
 
   border-style: none;
-  width: 400px;
-  height: 100px;
-  margin: 0 40px;
+  width: 300px;
+  height: 60px;
+  margin: 0 70px;
+  margin-top: 30px;
   text-align: center;
   font-size: 20px;
   background-color: #213a54;
