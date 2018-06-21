@@ -32,6 +32,7 @@ Feel free to fork it, tweak it and send a pull request! I plan to move from astr
 - [X] connect node client with Electron frontend
 - [ ] add favourites button?
 - [ ] move from pure html/css prototype to React
+- [ ] packaging
 <br/>   .
 <br/>   .
 <br/>   .
