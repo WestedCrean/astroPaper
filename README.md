@@ -18,18 +18,19 @@ pipenv shell
 python astropaper.py
 ```
 
-Feel free to fork it, tweak it and send a pull request! I plan to move from astrophotography to other pictures also, to let a user choose his/her own wallpaper genre.
+Feel free to fork it, tweak it and send a pull request! I plan to move from astrophotography to other topics too, preferably to let a user choose his/her own wallpaper genre.
 
 ## ☑ ROADMAP
 
 - [X] python backend (finally bulletproof)
+- [X] thumbnail mechanism
 - [X] prototype frontend
 - [X] make Electron.js work
 - [X] add zerorpc
 - [X] move from zerorpc to grpc
-- [ ] connect node client with Electron frontend
+- [X] connect node client with Electron frontend
 - [ ] add favourites button?
-- [ ] React app serving images to Electron
+- [ ] move from pure html/css prototype to React
 <br/>   .
 <br/>   .
 <br/>   .
