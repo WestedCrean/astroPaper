@@ -9,6 +9,7 @@ but in the future users will be able to specify topics of interest and app will 
 
 If you want to use it as a console application - download astropaper.py from 'Server' folder and run
 ```
+pip install pipenv
 pipenv install
 ```
 then
