@@ -5,61 +5,69 @@ body {
   .preview-container {
     
   }
-  
-  .preview {
-    font-family: 'Segoe UI', Helvetica, Geneva, Verdana, sans-serif;
-    display: block;
-    background-color: #e3e3e3;
-    text-align: center;
-    img {
-        width: 233px;
-        height: 133;
-    }
+
+.background {
+  background: url('https://apod.nasa.gov/apod/image/1711/20171117dawnTezel.jpg') no-repeat center center fixed; 
+  background-size: cover
+}
+
+.preview {
+  font-family: 'Segoe UI', Helvetica, Geneva, Verdana, sans-serif;
+  display: block;
+  background-color: #e3e3e3;
+  text-align: center;
+  img {
+      width: 233px;
+      height: 133;
   }
-  .previews {
-    display: grid;
-    width: 700px;
-    height: 400px;
-    margin: 0px auto;
-  }
-  
-  
-  .description {
-    font-family: 'Segoe UI', Helvetica, Geneva, Verdana, sans-serif;
-    color: #555555;
-    display: block;
-    margin: 0 auto;
-    margin-top: 20px;
-    text-align: center;
-  }
-  
-  button {
-    font-family: 'Segoe UI', Helvetica, Geneva, Verdana, sans-serif;
-    float: left;
-    cursor: pointer;
-  
-    border-style: none;
-    width: 300px;
-    height: 60px;
-    margin: 0 70px;
-    margin-top: 30px;
-    text-align: center;
-    font-size: 20px;
-    background-color: #213a54;
-    color: #e3e3e3;
-  
-    float: center;
-    cursor: pointer;
-  }
-  
-  button:active{
-    background-color: #0e1924;
-  }
-  
-  .button-container{
-    display: block;
-    margin: 0 auto;
-    width: 960px;
-  
-  }
-  
+}
+.previews {
+  display: grid;
+  width: 700px;
+  height: 400px;
+  margin: 0px auto;
+}
+
+
+.description {
+  font-family: 'Segoe UI', Helvetica, Geneva, Verdana, sans-serif;
+  color: #463f5f;
+  display: block;
+  margin: 0 auto;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.container{
+
+}
+button {
+  font-family: 'Segoe UI', Helvetica, Geneva, Verdana, sans-serif;
+  display: inline-block;
+  border: none;
+  padding: 1rem 2rem;
+  text-decoration: none;
+  background: #1e3750;
+  color: #000;
+  font-family: sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-left: 200px;
+  text-align: center;
+  transition: background 250ms ease-in-out, 
+              transform 150ms ease;
+}
+
+button:hover,
+button:focus {
+  background: #25578a;
+}
+
+button:focus {
+  outline: 1px solid #000;
+  outline-offset: -4px;
+}
+
+button:active {
+  transform: scale(0.99);
+}
