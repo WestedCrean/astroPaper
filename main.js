@@ -15,7 +15,7 @@ const grpc = require('grpc');
 
 let mainWindow = null
 const createWindow = () => {
-  mainWindow = new BrowserWindow({width: 1000, height: 600});
+  mainWindow = new BrowserWindow({width: 1100, height: 600});
   mainWindow.loadURL(require('url').format({
     pathname: path.join(__dirname, 'index.html'),
     protocol: 'file:',
