@@ -1,6 +1,6 @@
 # 🚀💫🌔 astroPaper
 
-AstroPaper is a Electron.js + Python app, serving you random wallpapers of your choice
+AstroPaper is a Electron.js + Python app, serving random wallpapers
 
 ![](https://i.imgur.com/s9DvJ2d.gif)
 
