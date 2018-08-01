@@ -164,6 +164,7 @@ class Astropaper():
         self.wallpaper = newWallpaper(self.path)
     def setup(self):
         wallpaperSetup(self.platform,self.wallpaper,self.path)
+        #TODO: clean this up
 
 def main():
     astropaper = Astropaper()
