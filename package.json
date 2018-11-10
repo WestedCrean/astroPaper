@@ -3,18 +3,21 @@
   "version": "3.0.0",
   "private": true,
   "dependencies": {
+    "concurrently": "^4.0.1",
+    "electron": "^3.0.8",
+    "electron-builder": "^20.34.0",
     "react": "^16.6.1",
     "react-dom": "^16.6.1",
-    "react-scripts": "2.1.1"
+    "react-scripts": "2.1.1",
+    "wait-on": "^3.2.0"
   },
-  "main": "./src/electron-starter.js",
-  "electron-dev": "ELECTRON_START_URL=http://localhost:3000 electron .",
+  "main": "src/electron-starter.js",
   "scripts": {
+    "electron-dev": "concurrently \"BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "electron": "electron ."
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -24,8 +27,5 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ],
-  "devDependencies": {
-    "electron": "^3.0.8"
-  }
+  ]
 }
