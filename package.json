@@ -15,7 +15,7 @@
     "protobufjs": "^6.8.6"
   },
   "devDependencies": {
-    "electron": "^1.8.4",
+    "electron": "^9.4.0",
     "electron-packager": "^8.5.1"
   }
 }
